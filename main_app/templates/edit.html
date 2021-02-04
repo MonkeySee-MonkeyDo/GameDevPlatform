@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Edit User{% endblock title %}
+{% block content %}
+<main>
+    <h1>Edit User</h1>
+    <form enctype="multipart/form-data" method="POST">
+        <fieldset>
+            <legend>Please edit your info:</legend>
+
+            <label>
+                Username:
+                <input type="text" name="username" value="{{ user.username }}">
+            </label>
+            <label>
+                Password:
+                <input type="password" name="password" value="{{ user.password }}">
+            </label>
+            <label>
+                Email:
+                <input type="email" name="email" value="{{ user.email }}">
+            </label>
+            <label>
+                Phone Number:
+                <input type="tel" name="phone_number" value="{{ user.phone_number }}">
+            </label>
+            <label>
+                First Name:
+                <input type="text" name="first_name" value="{{ user.first_name }}">
+            </label>
+            <label>
+                Last Name:
+                <input type="text" name="last_name" value="{{ user.last_name }}">
+            </label>
+            <label>
+                Date of Birth:
+                <input type="date" name="dob" value="{{ user.dob }}">
+            </label>
+            <label>
+                Sex:
+                <select name="sex">
+                    {% for sex in sexes %}
+                    <option value="{{ sex[0] }}" {% if user.sex == sex[0] %}selected{% endif %}>{{ sex[1] }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Role:
+                <select name="role">
+                    {% for role in roles %}
+                    <option value="{{ role[0] }}" {% if user.role == role[0] %}selected{% endif %}>{{ role[1] }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label>
+                Link:
+                <input type="url" name="link" value="{{ user.links[0] }}">
+            </label>
+            <input type="submit" class="submit" value="Submit">
+        </fieldset>
+    </form>
+</main>
+{% endblock content %}
