@@ -1,10 +1,17 @@
-class InputField:
-    def __init__(self, title, name, input_type, required=False):
+class Field:
+    def __init__(self, title, name, required=False):
         self.title = title
         self.name = name
-        self.input_type = input_type
         self.value = None
         self.required = required
+    
+    def render(self):
+        pass
+
+class InputField(Field):
+    def __init__(self, title, name, input_type, required=False):
+        self.input_type = input_type
+        super().__init__(title, name, required)
     
     def render(self):
         return f"""
@@ -14,13 +21,10 @@ class InputField:
         </label>
         """
 
-class SelectField:
-    def __init__(self, title, name, options, selected=None, required=False):
-        self.title = title
-        self.name = name
+class SelectField(Field):
+    def __init__(self, title, name, options, required=False):
         self.options = options
-        self.selected = selected
-        self.required = required
+        super().__init__(title, name, required)
     
     def render(self):
         start = f"""
@@ -30,7 +34,7 @@ class SelectField:
         middle = ""
         for option in self.options:
             middle += f"""
-                <option value="{option[0]}"{" selected" if self.selected == option[0] else ""}>{option[1]}</option>"""
+                <option value="{option[0]}"{" selected" if self.value == option[0] else ""}>{option[1]}</option>"""
         end = f"""
             </select>
         </label>
@@ -52,10 +56,7 @@ class Form:
             val = value_dict[field.name]
             if isinstance(val, list):
                 val = val[0]
-            if isinstance(field, InputField):
-                field.value = val
-            elif isinstance(field, SelectField):
-                field.selected = val
+            field.value = val
 
 sexes = [["not set", "Select One..."], ["male", "Male"], ["female", "Female"], ["prefer not to say", "Prefer Not To Say"]]
 roles = [["not set", "Select One..."], ["developer", "Developer"], ["artist", "Artist"], ["combination", "Both"]]
