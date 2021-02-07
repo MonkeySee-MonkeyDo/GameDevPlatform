@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}User Detail{% endblock title %}
+{% block content %}
+<main>
+    <p>User ID: {{ user._id }}</p>
+    <p>Username: {{ user.username }}</p>
+    <p>Password: {{ user.password }}</p>
+    <p>Email: {{ user.email }}</p>
+    <p><a href="/profile/{{ user._id }}">PROFILE</a></p>
+    <p><a href="/edit-user/{{ user._id }}">EDIT</a></p>
+    <p><a href="/delete/{{ user._id }}">- DELETE</a></p>
+</main>
+{% endblock content %}
