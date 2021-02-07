@@ -18,7 +18,21 @@ class InputField(Field):
         return f"""
         <label>
             {self.title}{"*" if self.required else ""}:
-            <input type="{self.input_type}" name="{self.name}"{'value="' + self.value + '"' if self.value else ""}{" required" if self.required else ""}{" disabled" if self.disabled else ""}>
+            <input type="{self.input_type}" name="{self.name}"{' value="' + self.value + '"' if self.value else ""}{" required" if self.required else ""}{" disabled" if self.disabled else ""}>
+        </label>
+        """
+
+class TextAreaField(Field):
+    def __init__(self, title, name, rows, cols, required=False, disabled=False):
+        self.rows = rows
+        self.cols = cols
+        super().__init__(title, name, required, disabled)
+    
+    def render(self):
+        return f"""
+        <label>
+            {self.title}{"*" if self.required else ""}:
+            <textarea row="{self.rows}" cols="{self.cols}" name="{self.name}"{" required" if self.required else ""}{" disabled" if self.disabled else ""}>{self.value if self.value else ""}</textarea>
         </label>
         """
 
@@ -59,9 +73,6 @@ class Form:
                 val = val[0]
             field.value = val
 
-sexes = [["not set", "Select One..."], ["male", "Male"], ["female", "Female"], ["prefer not to say", "Prefer Not To Say"]]
-roles = [["not set", "Select One..."], ["developer", "Developer"], ["artist", "Artist"], ["combination", "Both"]]
-
 class UserForm(Form):
     def __init__(self):
         self.fields = [
@@ -72,6 +83,8 @@ class UserForm(Form):
 
 class ProfileForm(Form):
     def __init__(self):
+        sexes = [["not set", "Select One..."], ["male", "Male"], ["female", "Female"], ["prefer not to say", "Prefer Not To Say"]]
+        roles = [["not set", "Select One..."], ["developer", "Developer"], ["artist", "Artist"], ["combination", "Both"]]
         self.fields = [
             InputField("First Name", "first_name", "text", True),
             InputField("Last Name", "last_name", "text", True),
@@ -81,4 +94,15 @@ class ProfileForm(Form):
             SelectField("Sex", "sex", sexes),
             SelectField("Role", "role", roles),
             InputField("Link", "link", "url")
+        ]
+
+class PostForm(Form):
+    def __init__(self, users):
+        users_select = []
+        for user in users:
+            users_select.append([str(user["_id"]), user["username"]])
+        self.fields = [
+            SelectField("Poster", "user_id", users_select),
+            InputField("Title", "title", "text", True),
+            TextAreaField("Body", "body", 4, 50, True)
         ]

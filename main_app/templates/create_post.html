@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Create Post{% endblock title %}
+{% block content %}
+<main>
+    <h1>New Post</h1>
+    <form enctype="multipart/form-data" method="POST">
+        <fieldset>
+            <legend>Please fill out post info:</legend>
+            {{ form.render()|safe }}
+            <input type="submit">
+        </fieldset>
+    </form>
+</main>
+{% endblock content %}

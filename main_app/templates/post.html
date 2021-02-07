@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Post Detail{% endblock title %}
+{% block content %}
+<main>
+    <p>Post ID: {{ post._id }}</p>
+    <p>Author: {{ post.user_id }}</p>
+    <p>Title: {{ post.title }}</p>
+    <p>Body: {{ post.body }}</p>
+    <p>Votes: {{ post.votes }}</p>
+    <p>Time Posted: {{ post.timestamp.as_datetime() }}</p>
+</main>
+{% endblock content %}
