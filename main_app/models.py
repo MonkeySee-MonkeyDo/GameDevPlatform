@@ -1,3 +1,6 @@
+from bson.timestamp import Timestamp
+from datetime import datetime
+
 def blank_user(username, password, email):
     return {
         "username": username,
@@ -28,4 +31,23 @@ def blank_profile(user_id, email, **values):
         "dob": values["dob"],
         "role": values["role"],
         "link": values["link"]
+    }
+
+def blank_post(user_id, title, body, votes=0, reply_ids=[]):
+    return {
+        "user_id": user_id,
+        "title": title,
+        "body": body,
+        "votes": votes,
+        "timestamp": Timestamp(datetime.now(), 1),
+        "reply_ids": reply_ids
+    }
+
+def blank_reply(user_id, post_id, body, votes=0):
+    return {
+        "user_id": user_id,
+        "post_id": post_id,
+        "body": body,
+        "votes": votes,
+        "timestamp": Timestamp(datetime.now(), 1)
     }
