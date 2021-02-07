@@ -1,24 +1,13 @@
 {% extends "base.html" %}
-{% block title %}{{ user.first_name }} {{ user.last_name }}{% endblock title %}
+{% block title %}User Detail{% endblock title %}
 {% block content %}
 <main>
-    <p>id: {{ user._id }}</p>
-    <p>Full Name: {{ user.first_name }} {{ user.last_name }}</p>
+    <p>User ID: {{ user._id }}</p>
     <p>Username: {{ user.username }}</p>
     <p>Password: {{ user.password }}</p>
     <p>Email: {{ user.email }}</p>
-    <p>Phone Number: {{ user.phone_number }}</p>
-    <p>Date of Birth: {{ user.dob }}</p>
-    <p>Sex: {{ user.sex }}</p>
-    <p>Role: {{ user.role }}</p>
-    <p>
-        Links:
-        <ul>
-            {% for link in user.links %}
-            <li><a href="{{ link }}">{{ link }}</a></li>
-            {% endfor %}
-        </ul>
-    </p>
-    <p><a href="/edit/{{ user._id }}">EDIT</a></p>
+    <p><a href="/profile/{{ user._id }}">PROFILE</a></p>
+    <p><a href="/edit-user/{{ user._id }}">EDIT</a></p>
+    <p><a href="/delete/{{ user._id }}">- DELETE</a></p>
 </main>
 {% endblock content %}

@@ -1,36 +1,37 @@
 class Field:
-    def __init__(self, title, name, required=False):
+    def __init__(self, title, name, required=False, disabled=False):
         self.title = title
         self.name = name
         self.value = None
         self.required = required
+        self.disabled = disabled
     
     def render(self):
         pass
 
 class InputField(Field):
-    def __init__(self, title, name, input_type, required=False):
+    def __init__(self, title, name, input_type, required=False, disabled=False):
         self.input_type = input_type
-        super().__init__(title, name, required)
+        super().__init__(title, name, required, disabled)
     
     def render(self):
         return f"""
         <label>
             {self.title}{"*" if self.required else ""}:
-            <input type="{self.input_type}" name="{self.name}"{'value="' + self.value + '"' if self.value else ""}{" required" if self.required else ""}>
+            <input type="{self.input_type}" name="{self.name}"{'value="' + self.value + '"' if self.value else ""}{" required" if self.required else ""}{" disabled" if self.disabled else ""}>
         </label>
         """
 
 class SelectField(Field):
-    def __init__(self, title, name, options, required=False):
+    def __init__(self, title, name, options, required=False, disabled=False):
         self.options = options
-        super().__init__(title, name, required)
+        super().__init__(title, name, required, disabled)
     
     def render(self):
         start = f"""
         <label>
             {self.title}{"*" if self.required else ""}:
-            <select name="{self.name}"{" required" if self.required else ""}>"""
+            <select name="{self.name}"{" required" if self.required else ""}{" disabled" if self.disabled else ""}>"""
         middle = ""
         for option in self.options:
             middle += f"""
@@ -66,13 +67,18 @@ class UserForm(Form):
         self.fields = [
             InputField("Username", "username", "text", True),
             InputField("Password", "password", "password", True),
-            InputField("Email", "email", "email", True),
-            InputField("Phone Number", "phone_number", "tel"),
+            InputField("Email", "email", "email", True)
+        ]
+
+class ProfileForm(Form):
+    def __init__(self):
+        self.fields = [
             InputField("First Name", "first_name", "text", True),
             InputField("Last Name", "last_name", "text", True),
+            InputField("Email", "email", "email", True, True),
+            InputField("Phone Number", "phone_number", "tel"),
             InputField("Date of Birth", "dob", "date"),
             SelectField("Sex", "sex", sexes),
             SelectField("Role", "role", roles),
-            InputField("Link", "links", "url")
+            InputField("Link", "link", "url")
         ]
-
