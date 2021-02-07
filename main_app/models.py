@@ -6,6 +6,18 @@ def blank_user(username, password, email):
     }
 
 def blank_profile(user_id, email, **values):
+    if not values:
+        return {
+            "user_id": user_id,
+            "first_name": None,
+            "last_name": None,
+            "sex": None,
+            "phone_number": None,
+            "email": email,
+            "dob": None,
+            "role": None,
+            "link": None
+        }
     return {
         "user_id": user_id,
         "first_name": values["first_name"],
