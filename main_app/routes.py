@@ -172,7 +172,7 @@ def login():
         password = request.form.get("password")
         # TODO: PREVENT SAME USERNAMES
         for db_password in db.users.find({"username": username}):
-            if password == db_password:
+            if password == db_password["password"]:
                 flash("Password correct!")
                 return redirect(url_for("main.homepage"))
         flash("Password incorrect. Please try again.")

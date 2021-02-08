@@ -12,7 +12,7 @@ class Form:
         for field in self.fields:
             output += field.render()
         output += f"""
-        <input type="submit" value={self.submit}>
+        <input type="submit" value="{self.submit}">
         """
         return output
     
