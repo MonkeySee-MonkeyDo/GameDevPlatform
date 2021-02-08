@@ -1,6 +1,7 @@
 from flask import Blueprint, request, redirect, render_template, url_for, flash
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from markdown import markdown
 from main_app.forms import *
 from main_app.models import *
 from main_app import app, db
@@ -47,10 +48,12 @@ def post(post_id):
     """Display post information"""
     post_data = db.posts.find_one({"_id": ObjectId(post_id)})
     post_data["user"] = db.users.find_one({"_id": ObjectId(post_data["user_id"])})
+    post_data["body"] = markdown(post_data["body"])
     users = db.users.find()
     replies = [reply for reply in db.replies.find({"post_id": post_id})]
     for reply in replies:
         reply["user"] = db.users.find_one({"_id": ObjectId(reply["user_id"])})
+        reply["body"] = markdown(reply["body"])
     form = ReplyForm(users)
     if request.method == "POST":
         reply_variables = {
@@ -62,7 +65,6 @@ def post(post_id):
         db.replies.insert_one(new_reply)
         flash("Reply created successfully")
         return redirect(url_for("main.post", post_id=post_id))
-    print(replies)
     return render_template("post.html", post=post_data, form=form, replies=replies)
 
 @main.route("/create", methods=["GET", "POST"])
