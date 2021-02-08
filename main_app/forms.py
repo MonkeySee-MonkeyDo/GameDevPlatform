@@ -1,13 +1,19 @@
 from main_app.form_fields import *
 
 class Form:
-    def __init__(self, *fields):
+    def __init__(self, title, legend, submit, *fields):
         self.fields = fields
+        self.title = "Form"
+        self.legend = "Legend"
+        self.submit = "Submit"
     
     def render(self):
         output = ""
         for field in self.fields:
             output += field.render()
+        output += f"""
+        <input type="submit" value={self.submit}>
+        """
         return output
     
     def set_values(self, value_dict):
@@ -19,18 +25,27 @@ class Form:
             field.value = val
 
 class UserForm(Form):
-    def __init__(self):
-        self.fields = [
+    def __init__(self, title, legend):
+        super().__init__(title, legend, "Submit",
             InputField("Username", "username", "text", True),
             InputField("Password", "password", "password", True),
             InputField("Email", "email", "email", True)
-        ]
+        )
+
+class DeleteUserForm(Form):
+    def __init__(self):
+        super().__init__(
+            "Delete User",
+            "Please confirm your password:", 
+            "DELETE", 
+            InputField("Password", "password", "password", True)
+        )
 
 class ProfileForm(Form):
-    def __init__(self):
+    def __init__(self, title, legend):
         sexes = [["not set", "Select One..."], ["male", "Male"], ["female", "Female"], ["prefer not to say", "Prefer Not To Say"]]
         roles = [["not set", "Select One..."], ["developer", "Developer"], ["artist", "Artist"], ["combination", "Both"]]
-        self.fields = [
+        super().__init__(title, legend, "Submit",
             InputField("First Name", "first_name", "text", True),
             InputField("Last Name", "last_name", "text", True),
             InputField("Email", "email", "email", True, True),
@@ -40,25 +55,32 @@ class ProfileForm(Form):
             SelectField("Role", "role", roles),
             InputField("Link", "link", "url"),
             FileUploadField("Profile Picture", "profile_picture", ["image/*"])
-        ]
+        )
 
 class PostForm(Form):
-    def __init__(self, users):
+    def __init__(self, title, legend, users):
         users_select = []
         for user in users:
             users_select.append([str(user["_id"]), user["username"]])
-        self.fields = [
+        super().__init__(title, legend, "Submit",
             SelectField("Poster", "user_id", users_select),
             InputField("Title", "title", "text", True),
             TextAreaField("Body", "body", 4, 50, True)
-        ]
+        )
 
 class ReplyForm(Form):
-    def __init__(self, users):
+    def __init__(self, title, legend, users):
         users_select = []
         for user in users:
             users_select.append([str(user["_id"]), user["username"]])
-        self.fields = [
+        super().__init__(title, legend, "Submit",
             SelectField("Poster", "user_id", users_select),
             TextAreaField("Body", "body", 4, 50, True)
-        ]
+        )
+
+class LoginForm(Form):
+    def __init__(self, title, legend):
+        super().__init__(title, legend, "Log In",
+            InputField("Username", "username", "text", True),
+            InputField("Password", "password", "text", True)
+        )

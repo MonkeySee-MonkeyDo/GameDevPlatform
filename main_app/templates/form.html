@@ -1,13 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Edit User{% endblock title %}
+{% block title %}{{ form.title }}{% endblock title %}
 {% block content %}
 <main>
-    <h1>Edit User</h1>
+    <h1>{{ form.title }}</h1>
     <form enctype="multipart/form-data" method="POST">
         <fieldset>
-            <legend>Please edit your info:</legend>
+            <legend>{{ form.legend }}</legend>
             {{ form.render()|safe }}
-            <input type="submit">
         </fieldset>
     </form>
 </main>

@@ -38,8 +38,8 @@ class InputField(Field):
         <label>
             {self.title}{"*" if self.required else ""}:
             <input type="{self.input_type}" 
-            name="{self.name if self.name else ""}
-            "{' value="' + self.value + '"' if self.value else ""}
+            name="{self.name if self.name else ""}"
+            {' value="' + self.value + '"' if self.value else ""}
             {" required" if self.required else ""}
             {" disabled" if self.disabled else ""}>
         </label>
