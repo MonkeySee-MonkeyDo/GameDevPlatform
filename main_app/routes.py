@@ -1,12 +1,34 @@
 from flask import Blueprint, request, redirect, render_template, url_for, flash
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
+from werkzeug.utils import secure_filename
 from markdown import markdown
 from main_app.forms import *
 from main_app.models import *
 from main_app import app, db
+import os
 
 main = Blueprint("main", __name__)
+
+############################################################
+# HELPER FUNCTIONS
+############################################################
+
+def doc_from_id(collection, id):
+    return collection.find_one({"_id": ObjectId(id)})
+
+def rename_file(file, filename):
+    file.filename = f"{filename}.{file.filename.split('.')[1]}"
+    return file.filename
+
+def save_file(file, filename, *folders):
+    if file:
+        filename = rename_file(file, filename)
+        filename = secure_filename(filename)
+        path = main.root_path
+        for folder in folders:
+            path = os.path.join(path, folder)
+        file.save(os.path.join(path, filename))
 
 ############################################################
 # ROUTES
@@ -33,7 +55,7 @@ def posts():
 @main.route("/users/<user_id>")
 def user(user_id):
     """Display user information"""
-    user_data = db.users.find_one({"_id": ObjectId(user_id)})
+    user_data = doc_from_id(db.users, user_id)
     return render_template("user.html", user=user_data)
 
 @main.route("/profiles/<user_id>")
@@ -46,13 +68,13 @@ def profile(user_id):
 def post(post_id):
     # TODO: jinja template
     """Display post information"""
-    post_data = db.posts.find_one({"_id": ObjectId(post_id)})
-    post_data["user"] = db.users.find_one({"_id": ObjectId(post_data["user_id"])})
+    post_data = doc_from_id(db.posts, post_id)
+    post_data["user"] = doc_from_id(db.users, post_data["user_id"])
     post_data["body"] = markdown(post_data["body"])
     users = db.users.find()
     replies = [reply for reply in db.replies.find({"post_id": post_id})]
     for reply in replies:
-        reply["user"] = db.users.find_one({"_id": ObjectId(reply["user_id"])})
+        reply["user"] = doc_from_id(db.users, reply["user_id"])
         reply["body"] = markdown(reply["body"])
     form = ReplyForm(users)
     if request.method == "POST":
@@ -96,7 +118,7 @@ def create_post():
 
 @main.route("/edit-user/<user_id>", methods=["GET", "POST"])
 def edit_user(user_id):
-    user_data = db.users.find_one({"_id": ObjectId(user_id)})
+    user_data = doc_from_id(db.users, user_id)
     form = UserForm()
     form.set_values(user_data)
     if request.method == "POST":
@@ -116,14 +138,17 @@ def edit_profile(user_id):
             profile_data["user_id"],
             profile_data["email"],
             **request.form)
-        db.profiles.update_one(profile_data, {"$set": edited_profile})
+        if "profile_picture" in request.files:
+            profile_picture = request.files["profile_picture"]
+            save_file(profile_picture, f"profile_{user_id}", "uploads", "images")
+            db.profiles.update_one(profile_data, {"$set": edited_profile})
         flash("User edited successfully.")
         return redirect(url_for("main.profile", user_id=user_id))
     return render_template("edit_user.html", form=form)
 
 @main.route("/delete/<user_id>", methods=["GET", "POST"])
 def delete_user(user_id):
-    user_data = db.users.find_one({"_id": ObjectId(user_id)})
+    user_data = doc_from_id(db.users, user_id)
     if request.method == "POST":
         password = request.form.get("password")
         if user_data["password"] == password:

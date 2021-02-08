@@ -12,7 +12,8 @@ class Form:
     
     def set_values(self, value_dict):
         for field in self.fields:
-            val = value_dict[field.name]
+            if field.name in value_dict:
+                val = value_dict[field.name]
             if isinstance(val, list):
                 val = val[0]
             field.value = val
@@ -37,7 +38,8 @@ class ProfileForm(Form):
             InputField("Date of Birth", "dob", "date"),
             SelectField("Sex", "sex", sexes),
             SelectField("Role", "role", roles),
-            InputField("Link", "link", "url")
+            InputField("Link", "link", "url"),
+            FileUploadField("Profile Picture", "profile_picture", ["image/*"])
         ]
 
 class PostForm(Form):
