@@ -21,12 +21,6 @@
             {% endfor %}
         </ul>
     </p>
-    <h1>New Reply</h1>
-    <form enctype="multipart/form-data" method="POST">
-        <fieldset>
-            <legend>Please fill out reply info:</legend>
-            {{ form.render()|safe }}
-        </fieldset>
-    </form>
+    {% include "form_template.html" %}
 </main>
 {% endblock content %}

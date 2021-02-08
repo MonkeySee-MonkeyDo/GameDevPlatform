@@ -1,0 +1,7 @@
+<h1>{{ form.title }}</h1>
+<form enctype="multipart/form-data" method="POST">
+    <fieldset>
+        <legend>{{ form.legend }}</legend>
+        {{ form.render()|safe }}
+    </fieldset>
+</form>

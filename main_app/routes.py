@@ -76,7 +76,7 @@ def post(post_id):
     for reply in replies:
         reply["user"] = doc_from_id(db.users, reply["user_id"])
         reply["body"] = markdown(reply["body"])
-    form = ReplyForm(None, None, users)
+    form = ReplyForm("New Reply", "Please fill out reply info:", users)
     if request.method == "POST":
         reply_variables = {
             "user_id": request.form.get("user_id"),

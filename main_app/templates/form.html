@@ -1,13 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ form.title }}{% endblock title %}
+{% include }
 {% block content %}
 <main>
-    <h1>{{ form.title }}</h1>
-    <form enctype="multipart/form-data" method="POST">
-        <fieldset>
-            <legend>{{ form.legend }}</legend>
-            {{ form.render()|safe }}
-        </fieldset>
-    </form>
+{% include "form_template.html" %}
 </main>
 {% endblock content %}
