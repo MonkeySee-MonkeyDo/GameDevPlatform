@@ -1,60 +1,4 @@
-class Field:
-    def __init__(self, title, name, required=False, disabled=False):
-        self.title = title
-        self.name = name
-        self.value = None
-        self.required = required
-        self.disabled = disabled
-    
-    def render(self):
-        pass
-
-class InputField(Field):
-    def __init__(self, title, name, input_type, required=False, disabled=False):
-        self.input_type = input_type
-        super().__init__(title, name, required, disabled)
-    
-    def render(self):
-        return f"""
-        <label>
-            {self.title}{"*" if self.required else ""}:
-            <input type="{self.input_type}" name="{self.name}"{' value="' + self.value + '"' if self.value else ""}{" required" if self.required else ""}{" disabled" if self.disabled else ""}>
-        </label>
-        """
-
-class TextAreaField(Field):
-    def __init__(self, title, name, rows, cols, required=False, disabled=False):
-        self.rows = rows
-        self.cols = cols
-        super().__init__(title, name, required, disabled)
-    
-    def render(self):
-        return f"""
-        <label>
-            {self.title}{"*" if self.required else ""}:
-            <textarea row="{self.rows}" cols="{self.cols}" name="{self.name}"{" required" if self.required else ""}{" disabled" if self.disabled else ""}>{self.value if self.value else ""}</textarea>
-        </label>
-        """
-
-class SelectField(Field):
-    def __init__(self, title, name, options, required=False, disabled=False):
-        self.options = options
-        super().__init__(title, name, required, disabled)
-    
-    def render(self):
-        start = f"""
-        <label>
-            {self.title}{"*" if self.required else ""}:
-            <select name="{self.name}"{" required" if self.required else ""}{" disabled" if self.disabled else ""}>"""
-        middle = ""
-        for option in self.options:
-            middle += f"""
-                <option value="{option[0]}"{" selected" if self.value == option[0] else ""}>{option[1]}</option>"""
-        end = f"""
-            </select>
-        </label>
-        """
-        return start + middle + end
+from main_app.form_fields import *
 
 class Form:
     def __init__(self, *fields):
@@ -104,5 +48,15 @@ class PostForm(Form):
         self.fields = [
             SelectField("Poster", "user_id", users_select),
             InputField("Title", "title", "text", True),
+            TextAreaField("Body", "body", 4, 50, True)
+        ]
+
+class ReplyForm(Form):
+    def __init__(self, users):
+        users_select = []
+        for user in users:
+            users_select.append([str(user["_id"]), user["username"]])
+        self.fields = [
+            SelectField("Poster", "user_id", users_select),
             TextAreaField("Body", "body", 4, 50, True)
         ]

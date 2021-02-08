@@ -33,14 +33,13 @@ def blank_profile(user_id, email, **values):
         "link": values["link"]
     }
 
-def blank_post(user_id, title, body, votes=0, reply_ids=[]):
+def blank_post(user_id, title, body, votes=0):
     return {
         "user_id": user_id,
         "title": title,
         "body": body,
         "votes": votes,
-        "timestamp": Timestamp(datetime.now(), 1),
-        "reply_ids": reply_ids
+        "timestamp": Timestamp(datetime.now(), 1)
     }
 
 def blank_reply(user_id, post_id, body, votes=0):

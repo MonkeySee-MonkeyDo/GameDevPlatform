@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect, render_template, url_for, flash
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
-from main_app.forms import UserForm, ProfileForm, PostForm
+from main_app.forms import *
 from main_app.models import *
 from main_app import app, db
 
@@ -41,12 +41,29 @@ def profile(user_id):
     profile_data = db.profiles.find_one({"user_id": user_id})
     return render_template("profile.html", profile=profile_data)
 
-@main.route("/posts/<post_id>")
+@main.route("/posts/<post_id>", methods=["GET", "POST"])
 def post(post_id):
     # TODO: jinja template
     """Display post information"""
     post_data = db.posts.find_one({"_id": ObjectId(post_id)})
-    return render_template("post.html", post=post_data)
+    post_data["user"] = db.users.find_one({"_id": ObjectId(post_data["user_id"])})
+    users = db.users.find()
+    replies = [reply for reply in db.replies.find({"post_id": post_id})]
+    for reply in replies:
+        reply["user"] = db.users.find_one({"_id": ObjectId(reply["user_id"])})
+    form = ReplyForm(users)
+    if request.method == "POST":
+        reply_variables = {
+            "user_id": request.form.get("user_id"),
+            "post_id": post_id,
+            "body": request.form.get("body")
+        }
+        new_reply = blank_reply(**reply_variables)
+        db.replies.insert_one(new_reply)
+        flash("Reply created successfully")
+        return redirect(url_for("main.post", post_id=post_id))
+    print(replies)
+    return render_template("post.html", post=post_data, form=form, replies=replies)
 
 @main.route("/create", methods=["GET", "POST"])
 def create_user():
@@ -66,7 +83,7 @@ def create_user():
 @main.route("/create-post", methods=["GET", "POST"])
 def create_post():
     """Post creation"""
-    users = db.users.find({})
+    users = db.users.find()
     form = PostForm(users)
     if request.method == "POST":
         new_post = blank_post(**request.form)
