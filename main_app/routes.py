@@ -170,7 +170,6 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        # TODO: PREVENT SAME USERNAMES
         for db_password in db.users.find({"username": username}):
             if password == db_password["password"]:
                 flash("Password correct!")
