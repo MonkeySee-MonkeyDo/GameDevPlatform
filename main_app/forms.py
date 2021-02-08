@@ -1,11 +1,11 @@
 from main_app.form_fields import *
 
 class Form:
-    def __init__(self, title, legend, submit, *fields):
+    def __init__(self, title="Form", legend="Legend", submit="Submit", *fields):
         self.fields = fields
-        self.title = "Form"
-        self.legend = "Legend"
-        self.submit = "Submit"
+        self.title = title
+        self.legend = legend
+        self.submit = submit
     
     def render(self):
         output = ""

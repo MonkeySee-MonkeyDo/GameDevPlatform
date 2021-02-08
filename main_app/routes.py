@@ -95,6 +95,9 @@ def create_user():
     form = UserForm("Create User", "Please fill out your info:")
     if request.method == "POST":
         new_user = blank_user(**request.form)
+        if db.users.count_documents({ "username": request.form.get("username")}, limit=1):
+            flash("Username already exists!")
+            return redirect(url_for("main.create_user"))
         db.users.insert_one(new_user)
         new_user_id = db.users.find_one(new_user)["_id"]
         new_user_email = new_user["email"]
