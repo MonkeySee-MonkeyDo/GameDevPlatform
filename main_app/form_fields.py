@@ -27,7 +27,6 @@ class FileUploadField(Field):
         </label>
         """
 
-
 class InputField(Field):
     def __init__(self, title, name, input_type, required=False, disabled=False):
         self.input_type = input_type

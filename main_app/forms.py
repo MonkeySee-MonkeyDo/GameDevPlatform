@@ -59,22 +59,14 @@ class ProfileForm(Form):
 
 class PostForm(Form):
     def __init__(self, title, legend, users):
-        users_select = []
-        for user in users:
-            users_select.append([str(user["_id"]), user["username"]])
         super().__init__(title, legend, "Submit",
-            SelectField("Poster", "user_id", users_select),
             InputField("Title", "title", "text", True),
             TextAreaField("Body", "body", 4, 50, True)
         )
 
 class ReplyForm(Form):
     def __init__(self, title, legend, users):
-        users_select = []
-        for user in users:
-            users_select.append([str(user["_id"]), user["username"]])
         super().__init__(title, legend, "Submit",
-            SelectField("Poster", "user_id", users_select),
             TextAreaField("Body", "body", 4, 50, True)
         )
 
@@ -82,5 +74,5 @@ class LoginForm(Form):
     def __init__(self, title, legend):
         super().__init__(title, legend, "Log In",
             InputField("Username", "username", "text", True),
-            InputField("Password", "password", "text", True)
+            InputField("Password", "password", "password", True)
         )
