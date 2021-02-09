@@ -65,7 +65,7 @@ def save_file(file, filename, *folders):
 # DECORATORS
 ############################################################
 
-def login_flags(redirect_url, *flags):
+def login_flags(redirect_url="main.homepage", flags=[]):
     def wrapper(callback):
         @functools.wraps(callback)
         def wrapped(*args, **kwargs):
@@ -95,35 +95,35 @@ def homepage():
     return render_template("index.html")
 
 @main.route("/users")
-@login_flags("main.homepage", "logged in")
+@login_flags(flags=["logged in"])
 def users():
     """Display users"""
     users_data = db.users.find()
     return render_template("users.html", users=users_data)
 
 @main.route("/posts")
-@login_flags("main.homepage", "logged in")
+@login_flags(flags=["logged in"])
 def posts():
     """Display posts"""
     posts_data = db.posts.find()
     return render_template("posts.html", posts=posts_data)
 
 @main.route("/users/<user_id>")
-@login_flags("main.homepage", "logged in")
+@login_flags(flags=["logged in"])
 def user(user_id):
     """Display user information"""
     user_data = doc_from_id(db.users, user_id)
     return render_template("user.html", user=user_data)
 
 @main.route("/profiles/<user_id>")
-@login_flags("main.homepage", "logged in")
+@login_flags(flags=["logged in"])
 def profile(user_id):
     """Display profile information"""
     profile_data = db.profiles.find_one({"user_id": user_id})
     return render_template("profile.html", profile=profile_data)
 
 @main.route("/posts/<post_id>", methods=["GET", "POST"])
-@login_flags("main.homepage", "logged in")
+@login_flags(flags=["logged in"])
 def post(post_id):
     """Display post information"""
     post_data = doc_from_id(db.posts, post_id)
@@ -148,7 +148,7 @@ def post(post_id):
     return render_template("post.html", post=post_data, form=form, replies=replies)
 
 @main.route("/create", methods=["GET", "POST"])
-@login_flags("main.homepage", "logged out")
+@login_flags(flags=["logged out"])
 def create_user():
     """User creation"""
     form = UserForm("Create User", "Please fill out your info:")
@@ -169,7 +169,7 @@ def create_user():
     return render_template("form.html", form=form)
 
 @main.route("/create-post", methods=["GET", "POST"])
-@login_flags("main.homepage", "logged in")
+@login_flags(flags=["logged in"])
 def create_post():
     """Post creation"""
     users = db.users.find()
@@ -183,7 +183,7 @@ def create_post():
     return render_template("form.html", form=form)
 
 @main.route("/edit-user/<user_id>", methods=["GET", "POST"])
-@login_flags("main.homepage", "logged in", "check user")
+@login_flags(flags=["logged in", "check user"])
 def edit_user(user_id):
     user_data = doc_from_id(db.users, user_id)
     form = UserForm("Edit User", "Please edit your info:")
@@ -197,7 +197,7 @@ def edit_user(user_id):
     return render_template("form.html", form=form)
 
 @main.route("/edit-profile/<user_id>", methods=["GET", "POST"])
-@login_flags("main.homepage", "logged in", "check user")
+@login_flags(flags=["logged in", "check user"])
 def edit_profile(user_id):
     profile_data = db.profiles.find_one({"user_id": user_id})
     form = ProfileForm("Edit Profile", "Please edit your info:")
@@ -216,7 +216,7 @@ def edit_profile(user_id):
     return render_template("form.html", form=form)
 
 @main.route("/delete/<user_id>", methods=["GET", "POST"])
-@login_flags("main.homepage", "logged in", "check user")
+@login_flags(flags=["logged in", "check user"])
 def delete_user(user_id):
     user_data = doc_from_id(db.users, user_id)
     form = DeleteUserForm()
@@ -231,7 +231,7 @@ def delete_user(user_id):
     return render_template("form.html", form=form)
 
 @main.route("/login", methods=["GET", "POST"])
-@login_flags("main.homepage", "logged out")
+@login_flags(flags=["logged out"])
 def login():
     form = LoginForm("Log In", "Please enter your credentials:")
     if request.method == "POST":
@@ -245,7 +245,7 @@ def login():
     return render_template("form.html", form=form)
 
 @main.route("/logout")
-@login_flags("main.homepage", "logged in")
+@login_flags(flags=["logged in"])
 def logout():
     if "user_id" in session:
         session.pop("user_id")
