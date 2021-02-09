@@ -18,11 +18,12 @@ class Form:
     
     def set_values(self, value_dict):
         for field in self.fields:
-            if field.name in value_dict:
-                val = value_dict[field.name]
-            if isinstance(val, list):
-                val = val[0]
-            field.value = val
+            if not (isinstance(field, InputField) and field.input_type == "password"):
+                if field.name in value_dict:
+                    val = value_dict[field.name]
+                if isinstance(val, list):
+                    val = val[0]
+                field.value = val
 
 class UserForm(Form):
     def __init__(self, title, legend):

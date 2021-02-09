@@ -7,6 +7,7 @@ from passlib.hash import pbkdf2_sha256
 from main_app.forms import *
 from main_app.models import *
 from main_app import app, db
+import functools
 import os
 
 main = Blueprint("main", __name__)
@@ -15,24 +16,34 @@ main = Blueprint("main", __name__)
 # HELPER FUNCTIONS
 ############################################################
 
+def logged_in():
+    if not "user_id" in session:
+        flash("You must be logged in to do this.")
+        return False
+    return True
+
+def logged_out():
+    if "user_id" in session:
+        flash("You must be logged out to do this.")
+        return False
+    return True
+
+def check_user(**kwargs):
+    if not logged_in():
+        return False
+    if "user_id" in kwargs:
+        if kwargs["user_id"] != session["user_id"]:
+            flash("You must be logged in to the right account.")
+            return False
+        return True
+    flash("Cannot verify user.")
+    return False
+
 def hash_password(password):
     return pbkdf2_sha256.hash(password)
 
 def verify_hash(a, b):
     return pbkdf2_sha256.verify(a, b)
-
-# TODO: gotta be a better way to handle this
-def check_logged_in():
-    if not "user_id" in session:
-        flash("You must be logged in to do this.")
-        return redirect(url_for("main.login"))
-    return True
-
-def check_correct_login(user_id):
-    if session["user_id"] != user_id:
-        flash("You are not logged in as this user!")
-        return redirect(url_for("main.homepage"))
-    return True
 
 def doc_from_id(collection, id):
     return collection.find_one({"_id": ObjectId(id)})
@@ -51,6 +62,30 @@ def save_file(file, filename, *folders):
         file.save(os.path.join(path, filename))
 
 ############################################################
+# DECORATORS
+############################################################
+
+def login_flags(redirect_url, *flags):
+    def wrapper(callback):
+        @functools.wraps(callback)
+        def wrapped(*args, **kwargs):
+            if "logged in" in flags:
+                # CHECK LOGGED IN
+                if not logged_in():
+                    return redirect(url_for(redirect_url))
+            if "logged out" in flags:
+                # CHECK NOT LOGGED IN
+                if not logged_out():
+                    return redirect(url_for(redirect_url))
+            if "check user" in flags:
+                # CHECK IF CORRECT USER IS LOGGED IN
+                if not check_user(**kwargs):
+                    return redirect(url_for(redirect_url))
+            return callback(*args, **kwargs)
+        return wrapped
+    return wrapper
+
+############################################################
 # ROUTES
 ############################################################
 
@@ -60,42 +95,37 @@ def homepage():
     return render_template("index.html")
 
 @main.route("/users")
+@login_flags("main.homepage", "logged in")
 def users():
     """Display users"""
-    if not (log := check_logged_in()) == True:
-        return log
     users_data = db.users.find()
     return render_template("users.html", users=users_data)
 
 @main.route("/posts")
+@login_flags("main.homepage", "logged in")
 def posts():
     """Display posts"""
-    if not (log := check_logged_in()) == True:
-        return log
     posts_data = db.posts.find()
     return render_template("posts.html", posts=posts_data)
 
 @main.route("/users/<user_id>")
+@login_flags("main.homepage", "logged in")
 def user(user_id):
     """Display user information"""
-    if not (log := check_logged_in()) == True:
-        return log
     user_data = doc_from_id(db.users, user_id)
     return render_template("user.html", user=user_data)
 
 @main.route("/profiles/<user_id>")
+@login_flags("main.homepage", "logged in")
 def profile(user_id):
     """Display profile information"""
-    if not (log := check_logged_in()) == True:
-        return log
     profile_data = db.profiles.find_one({"user_id": user_id})
     return render_template("profile.html", profile=profile_data)
 
 @main.route("/posts/<post_id>", methods=["GET", "POST"])
+@login_flags("main.homepage", "logged in")
 def post(post_id):
     """Display post information"""
-    if not (log := check_logged_in()) == True:
-        return log
     post_data = doc_from_id(db.posts, post_id)
     post_data["user"] = doc_from_id(db.users, post_data["user_id"])
     post_data["body"] = markdown(post_data["body"])
@@ -118,11 +148,9 @@ def post(post_id):
     return render_template("post.html", post=post_data, form=form, replies=replies)
 
 @main.route("/create", methods=["GET", "POST"])
+@login_flags("main.homepage", "logged out")
 def create_user():
     """User creation"""
-    if "user_id" in session:
-        flash("You are already logged in!")
-        return redirect(url_for("main.homepage"))
     form = UserForm("Create User", "Please fill out your info:")
     if request.method == "POST":
         new_user = blank_user(**request.form)
@@ -141,41 +169,36 @@ def create_user():
     return render_template("form.html", form=form)
 
 @main.route("/create-post", methods=["GET", "POST"])
+@login_flags("main.homepage", "logged in")
 def create_post():
     """Post creation"""
-    if not (log := check_logged_in()) == True:
-        return log
     users = db.users.find()
     form = PostForm("Create Post", "Please fill out post info:", users)
     if request.method == "POST":
         new_post = blank_post(user_id=session["user_id"], **request.form)
         db.posts.insert_one(new_post)
+        new_post_id = db.posts.find_one(new_post)["_id"]
         flash("Post created successfully.")
-        return redirect(url_for("main.homepage"))
+        return redirect(url_for("main.post", post_id=str(new_post_id)))
     return render_template("form.html", form=form)
 
 @main.route("/edit-user/<user_id>", methods=["GET", "POST"])
+@login_flags("main.homepage", "logged in", "check user")
 def edit_user(user_id):
-    if not (log := check_logged_in()) == True:
-        return log
-    if not (log := check_correct_login(user_id)) == True:
-        return log
     user_data = doc_from_id(db.users, user_id)
     form = UserForm("Edit User", "Please edit your info:")
     form.set_values(user_data)
     if request.method == "POST":
         edited_user = blank_user(**request.form)
+        edited_user["password"] = hash_password(edited_user["password"])
         db.users.update_one(user_data, {"$set": edited_user})
         flash("User edited successfully.")
         return redirect(url_for("main.user", user_id=user_id))
     return render_template("form.html", form=form)
 
 @main.route("/edit-profile/<user_id>", methods=["GET", "POST"])
+@login_flags("main.homepage", "logged in", "check user")
 def edit_profile(user_id):
-    if not (log := check_logged_in()) == True:
-        return log
-    if not (log := check_correct_login(user_id)) == True:
-        return log
     profile_data = db.profiles.find_one({"user_id": user_id})
     form = ProfileForm("Edit Profile", "Please edit your info:")
     form.set_values(profile_data)
@@ -193,9 +216,8 @@ def edit_profile(user_id):
     return render_template("form.html", form=form)
 
 @main.route("/delete/<user_id>", methods=["GET", "POST"])
+@login_flags("main.homepage", "logged in", "check user")
 def delete_user(user_id):
-    if not (log := check_correct_login(user_id)) == True:
-        return log
     user_data = doc_from_id(db.users, user_id)
     form = DeleteUserForm()
     if request.method == "POST":
@@ -209,6 +231,7 @@ def delete_user(user_id):
     return render_template("form.html", form=form)
 
 @main.route("/login", methods=["GET", "POST"])
+@login_flags("main.homepage", "logged out")
 def login():
     form = LoginForm("Log In", "Please enter your credentials:")
     if request.method == "POST":
@@ -222,9 +245,8 @@ def login():
     return render_template("form.html", form=form)
 
 @main.route("/logout")
+@login_flags("main.homepage", "logged in")
 def logout():
     if "user_id" in session:
         session.pop("user_id")
-    else:
-        flash("You are not logged in.")
     return redirect(url_for("main.homepage"))
