@@ -1,5 +1,6 @@
 <h1>{{ form.title }}</h1>
 <form enctype="multipart/form-data" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <fieldset>
         <legend>{{ form.legend }}</legend>
         {{ form.render()|safe }}

@@ -7,6 +7,7 @@ from passlib.hash import pbkdf2_sha256
 from main_app.forms import *
 from main_app.models import *
 from main_app import app, db
+import random
 import functools
 import os
 
@@ -38,6 +39,10 @@ def check_user(**kwargs):
         return True
     flash("Cannot verify user.")
     return False
+
+def random_string(n):
+    s = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    return "".join((random.choice(s) for i in range(n)))
 
 def hash_password(password):
     return pbkdf2_sha256.hash(password)
@@ -84,6 +89,10 @@ def login_flags(redirect_url="main.homepage", flags=[]):
             return callback(*args, **kwargs)
         return wrapped
     return wrapper
+
+############################################################
+# REQUEST HANDLING
+############################################################
 
 ############################################################
 # ROUTES

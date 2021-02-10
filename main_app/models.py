@@ -1,14 +1,14 @@
 from bson.timestamp import Timestamp
 from datetime import datetime
 
-def blank_user(username, password, email):
+def blank_user(username, password, email, **kwargs):
     return {
         "username": username,
         "password": password,
         "email": email
     }
 
-def blank_profile(user_id, email, **values):
+def blank_profile(user_id, email, **kwargs):
     if not values:
         return {
             "user_id": user_id,
@@ -23,17 +23,17 @@ def blank_profile(user_id, email, **values):
         }
     return {
         "user_id": user_id,
-        "first_name": values["first_name"],
-        "last_name": values["last_name"],
-        "sex": values["sex"],
-        "phone_number": values["phone_number"],
+        "first_name": kwargs["first_name"],
+        "last_name": kwargs["last_name"],
+        "sex": kwargs["sex"],
+        "phone_number": kwargs["phone_number"],
         "email": email,
-        "dob": values["dob"],
-        "role": values["role"],
-        "link": values["link"]
+        "dob": kwargs["dob"],
+        "role": kwargs["role"],
+        "link": kwargs["link"]
     }
 
-def blank_post(user_id, title, body, votes=0):
+def blank_post(user_id, title, body, votes=0, **kwargs):
     return {
         "user_id": user_id,
         "title": title,
@@ -42,7 +42,7 @@ def blank_post(user_id, title, body, votes=0):
         "timestamp": Timestamp(datetime.now(), 1)
     }
 
-def blank_reply(user_id, post_id, body, votes=0):
+def blank_reply(user_id, post_id, body, votes=0, **kwargs):
     return {
         "user_id": user_id,
         "post_id": post_id,
