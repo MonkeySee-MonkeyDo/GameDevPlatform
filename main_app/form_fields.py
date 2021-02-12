@@ -89,3 +89,28 @@ class SelectField(Field):
         </label>
         """
         return start + middle + end
+
+class Form:
+    def __init__(self, title="Form", legend="Legend", submit="Submit", *fields):
+        self.fields = fields
+        self.title = title
+        self.legend = legend
+        self.submit = submit
+    
+    def render(self):
+        output = ""
+        for field in self.fields:
+            output += field.render()
+        output += f"""
+        <input type="submit" value="{self.submit}">
+        """
+        return output
+    
+    def set_values(self, value_dict):
+        for field in self.fields:
+            if not (isinstance(field, InputField) and field.input_type == "password"):
+                if field.name in value_dict:
+                    val = value_dict[field.name]
+                if isinstance(val, list):
+                    val = val[0]
+                field.value = val

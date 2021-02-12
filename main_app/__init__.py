@@ -10,6 +10,11 @@ csrf = CSRFProtect(app)
 
 db = PyMongo(app).db
 
-from main_app.routes import main
-
+from main_app.main.routes import main
 app.register_blueprint(main)
+
+from main_app.auth.routes import auth
+app.register_blueprint(auth)
+
+from main_app.forum.routes import forum
+app.register_blueprint(forum)

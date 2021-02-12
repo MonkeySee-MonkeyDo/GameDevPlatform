@@ -9,7 +9,7 @@ def blank_user(username, password, email, **kwargs):
     }
 
 def blank_profile(user_id, email, **kwargs):
-    if not values:
+    if not kwargs:
         return {
             "user_id": user_id,
             "first_name": None,
