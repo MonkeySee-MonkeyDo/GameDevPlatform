@@ -2,10 +2,6 @@ from bson.objectid import ObjectId
 from werkzeug.utils import secure_filename
 import os
 
-############################################################
-# HELPER FUNCTIONS
-############################################################
-
 def doc_from_id(collection, id):
     return collection.find_one({"_id": ObjectId(id)})
 

@@ -7,9 +7,9 @@ class LoginForm(Form):
             InputField("Password", "password", "password", True)
         )
 
-class UserForm(Form):
+class SignUpForm(Form):
     def __init__(self, title, legend):
-        super().__init__(title, legend, "Submit",
+        super().__init__(title, legend, "Sign Up",
             InputField("Username", "username", "text", True),
             InputField("Password", "password", "password", True),
             InputField("Email", "email", "email", True)

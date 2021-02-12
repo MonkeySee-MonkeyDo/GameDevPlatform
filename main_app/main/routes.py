@@ -7,10 +7,6 @@ from main_app import app, db
 
 main = Blueprint("main", __name__)
 
-############################################################
-# ROUTES
-############################################################
-
 @main.route("/")
 def homepage():
     """Homepage"""
@@ -48,7 +44,7 @@ def profile(user_id):
 @login_flags(flags=["logged in", "check user"])
 def edit_user(user_id):
     user_data = doc_from_id(db.users, user_id)
-    form = UserForm("Edit User", "Please edit your info:")
+    form = EditUserForm("Edit User", "Please edit your info:")
     form.set_values(user_data)
     if request.method == "POST":
         edited_user = blank_user(**request.form)

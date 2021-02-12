@@ -1,11 +1,6 @@
 from flask import redirect, url_for, flash, session
-from markdown import markdown
 import bcrypt
 import functools
-
-############################################################
-# HELPER FUNCTIONS
-############################################################
 
 # CHECK LOGGED IN
 def logged_in():
@@ -42,19 +37,15 @@ def verify_hash(plain, hashed):
     plain = plain.encode("utf-8")
     return bcrypt.checkpw(plain, hashed)
 
-def session_login(user_id, username):
+def auth_login(user_id, username):
     session["user_id"] = user_id
     session["username"] = username
     session["logged_in"] = True
 
-def session_logout():
+def auth_logout():
     session.pop("user_id")
     session.pop("username")
     session["logged_in"] = False
-
-############################################################
-# DECORATORS
-############################################################
 
 def login_flags(redirect_url="main.homepage", flags=[]):
     def wrapper(callback):

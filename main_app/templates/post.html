@@ -2,25 +2,24 @@
 {% block title %}Post Detail{% endblock title %}
 {% block content %}
 <main>
-    <style>p { white-space: pre; }</style>
-    <p>Post ID: {{ post._id }}</p>
+    <style>.markdown { white-space: pre; }</style>
     <p>Author: {{ post.user.username }}</p>
-    <p>Title: {{ post.title }}</p>
-    <p>Body: {{ post.body|safe }}</p>
     <p>Votes: {{ post.votes }}</p>
+    <h1>{{ post.title }}</h1>
+    <p>----</p>
+    <p class="markdown">{{ post.body|safe }}</p>
     <p>Time Posted: {{ post.timestamp.as_datetime() }}</p>
-    <p>Replies:
-        <ul>
-            {% for reply in replies %}
-            <li>
-                <p>Author: {{ reply.user.username }}</p>
-                <p>Body: {{ reply.body|safe }}</p>
-                <p>Votes: {{ reply.votes }}</p>
-                <p>Time Replied: {{ reply.timestamp.as_datetime() }}</p>
-            </li>
-            {% endfor %}
-        </ul>
-    </p>
+    <hr>
+    {% if replies %}
+    <p><strong>Replies:</strong></p>
+    {% for reply in replies %}
+    <p>Author: {{ reply.user.username }}</p>
+    <p>Votes: {{ reply.votes }}</p>
+    <p class="markdown">{{ reply.body|safe }}</p>
+    <p>Time Replied: {{ reply.timestamp.as_datetime() }}</p>
+    <hr>
+    {% endfor %}
+    {% endif %}
     {% include "form_template.html" %}
 </main>
 {% endblock content %}

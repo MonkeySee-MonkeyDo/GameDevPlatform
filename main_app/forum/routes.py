@@ -1,5 +1,5 @@
 from flask import Blueprint, request, redirect, render_template, url_for, flash, session
-from markdown import markdown
+from misaka import html
 from main_app.auth.helpers import *
 from main_app.main.helpers import *
 from main_app.forum.forms import *
@@ -7,10 +7,6 @@ from main_app.models import *
 from main_app import db
 
 forum = Blueprint("forum", __name__)
-
-############################################################
-# ROUTES
-############################################################
 
 @forum.route("/create-post", methods=["GET", "POST"])
 @login_flags(flags=["logged in"])
@@ -32,12 +28,12 @@ def post(post_id):
     """Display post information"""
     post_data = doc_from_id(db.posts, post_id)
     post_data["user"] = doc_from_id(db.users, post_data["user_id"])
-    post_data["body"] = markdown(post_data["body"])
+    post_data["body"] = html(post_data["body"])
     users = db.users.find()
     replies = [reply for reply in db.replies.find({"post_id": post_id})]
     for reply in replies:
         reply["user"] = doc_from_id(db.users, reply["user_id"])
-        reply["body"] = markdown(reply["body"])
+        reply["body"] = html(reply["body"])
     form = ReplyForm("New Reply", "Please fill out reply info:", users)
     if request.method == "POST":
         reply_variables = {

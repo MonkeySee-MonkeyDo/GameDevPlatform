@@ -1,7 +1,7 @@
 from flask import Blueprint, request, redirect, render_template, url_for, flash, session
-from main_app.auth.forms import *
 from main_app.auth.helpers import *
 from main_app.main.helpers import *
+from main_app.auth.forms import *
 from main_app.models import *
 from main_app import app, db
 import random
@@ -10,15 +10,11 @@ import os
 
 auth = Blueprint("auth", __name__)
 
-############################################################
-# ROUTES
-############################################################
-
 @auth.route("/sign-up", methods=["GET", "POST"])
 @login_flags(flags=["logged out"])
 def sign_up():
     """User creation"""
-    form = UserForm("Create User", "Please fill out your info:")
+    form = SignUpForm("Create User", "Please fill out your info:")
     if request.method == "POST":
         new_user = blank_user(**request.form)
         new_user["password"] = hash_password(new_user["password"])
@@ -42,7 +38,7 @@ def login_user():
         username = request.form.get("username")
         for document in db.users.find({"username": username}):
             if verify_hash(request.form.get("password"), document["password"]):
-                session_login(str(document["_id"]), username)
+                auth_login(str(document["_id"]), username)
                 flash("Password correct!")
                 return redirect(url_for("main.homepage"))
         flash("Password incorrect. Please try again.")
@@ -51,5 +47,5 @@ def login_user():
 @auth.route("/logout")
 @login_flags(flags=["logged in"])
 def logout_user():
-    session_logout()
+    auth_logout()
     return redirect(url_for("main.homepage"))

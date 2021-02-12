@@ -1,6 +1,6 @@
 from main_app.form_fields import *
 
-class UserForm(Form):
+class EditUserForm(Form):
     def __init__(self, title, legend):
         super().__init__(title, legend, "Submit",
             InputField("Username", "username", "text", True),
