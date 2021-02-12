@@ -3,7 +3,7 @@ from main_app.auth.forms import *
 from main_app.auth.helpers import *
 from main_app.main.helpers import *
 from main_app.models import *
-from main_app import db
+from main_app import app, db
 import random
 import functools
 import os
@@ -31,18 +31,18 @@ def sign_up():
         new_profile = blank_profile(str(new_user_id), new_user_email)
         db.profiles.insert_one(new_profile)
         flash("User created successfully.")
-        return redirect(url_for("auth.login", user_id=new_user_id))
+        return redirect(url_for("auth.login_user", user_id=new_user_id))
     return render_template("form.html", form=form)
 
 @auth.route("/login", methods=["GET", "POST"])
 @login_flags(flags=["logged out"])
-def login():
+def login_user():
     form = LoginForm("Log In", "Please enter your credentials:")
     if request.method == "POST":
         username = request.form.get("username")
         for document in db.users.find({"username": username}):
             if verify_hash(request.form.get("password"), document["password"]):
-                session["user_id"] = str(document["_id"])
+                session_login(str(document["_id"]), username)
                 flash("Password correct!")
                 return redirect(url_for("main.homepage"))
         flash("Password incorrect. Please try again.")
@@ -50,7 +50,6 @@ def login():
 
 @auth.route("/logout")
 @login_flags(flags=["logged in"])
-def logout():
-    if "user_id" in session:
-        session.pop("user_id")
+def logout_user():
+    session_logout()
     return redirect(url_for("main.homepage"))

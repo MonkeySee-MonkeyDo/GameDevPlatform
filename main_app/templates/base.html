@@ -13,6 +13,10 @@
             <nav>
                 <a href="/">Home</a>
             </nav>
+
+            {% if session.logged_in %}
+            You are logged in as {{ session.username }}
+            {% endif %}
         </div>
         {% block content %}{% endblock %}
     </body>

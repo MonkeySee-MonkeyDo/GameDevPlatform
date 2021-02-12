@@ -3,7 +3,7 @@ from main_app.auth.helpers import *
 from main_app.main.helpers import *
 from main_app.main.forms import *
 from main_app.models import *
-from main_app import db
+from main_app import app, db
 
 main = Blueprint("main", __name__)
 
@@ -44,7 +44,7 @@ def profile(user_id):
     profile_data = db.profiles.find_one({"user_id": user_id})
     return render_template("profile.html", profile=profile_data)
 
-@main.route("/edit-user/<user_id>", methods=["GET", "POST"])
+@main.route("/users/<user_id>/edit", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def edit_user(user_id):
     user_data = doc_from_id(db.users, user_id)
@@ -58,7 +58,7 @@ def edit_user(user_id):
         return redirect(url_for("main.user", user_id=user_id))
     return render_template("form.html", form=form)
 
-@main.route("/edit-profile/<user_id>", methods=["GET", "POST"])
+@main.route("/profiles/<user_id>/edit", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def edit_profile(user_id):
     profile_data = db.profiles.find_one({"user_id": user_id})
@@ -77,7 +77,7 @@ def edit_profile(user_id):
         return redirect(url_for("main.profile", user_id=user_id))
     return render_template("form.html", form=form)
 
-@main.route("/delete/<user_id>", methods=["GET", "POST"])
+@main.route("/users/<user_id>/delete", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def delete_user(user_id):
     user_data = doc_from_id(db.users, user_id)

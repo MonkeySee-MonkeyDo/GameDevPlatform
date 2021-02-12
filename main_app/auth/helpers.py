@@ -9,14 +9,14 @@ import functools
 
 # CHECK LOGGED IN
 def logged_in():
-    if not "user_id" in session:
+    if not session["logged_in"]:
         flash("You must be logged in to do this.")
         return False
     return True
 
 # CHECK NOT LOGGED IN
 def logged_out():
-    if "user_id" in session:
+    if session["logged_in"]:
         flash("You must be logged out to do this.")
         return False
     return True
@@ -34,11 +34,23 @@ def check_user(**kwargs):
     return False
 
 def hash_password(password):
+    password = password.encode("utf-8")
     salt = bcrypt.gensalt()
-    hashed = bcrypt.hashpw(passwd, salt)
+    return bcrypt.hashpw(password, salt)
 
 def verify_hash(plain, hashed):
+    plain = plain.encode("utf-8")
     return bcrypt.checkpw(plain, hashed)
+
+def session_login(user_id, username):
+    session["user_id"] = user_id
+    session["username"] = username
+    session["logged_in"] = True
+
+def session_logout():
+    session.pop("user_id")
+    session.pop("username")
+    session["logged_in"] = False
 
 ############################################################
 # DECORATORS
