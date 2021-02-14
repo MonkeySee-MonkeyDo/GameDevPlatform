@@ -8,3 +8,6 @@ Within the project folder:
 4. Navigate to `127.0.0.1:5000` in your browser
 5. ???
 6. Profit
+
+Bio:
+GameDevPlatform is a service designed to connect Artists & Programmers who want to create video games together! Every programmer needs and artist, and every artist needs a programmer...! here you can find yours!
