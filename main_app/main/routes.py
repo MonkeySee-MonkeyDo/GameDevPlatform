@@ -10,7 +10,7 @@ main = Blueprint("main", __name__)
 @main.route("/", methods=["GET"])
 def homepage():
     """Homepage"""
-    return render_template("index.html")
+    return render_template("mainScreen.html")
 
 @main.route("/users", methods=["GET"])
 @login_flags(flags=["logged in"])
