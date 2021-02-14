@@ -9,7 +9,15 @@ import os
 app = Flask(__name__)
 app.config.from_object(Config)
 db = PyMongo(app).db
-md = Misaka(app)
+md = Misaka(app,
+    autolink=True, 
+    fenced_code=True, 
+    highlight=True, 
+    math=True, 
+    strikethrough=True, 
+    superscript=True, 
+    tables=True,
+    footnotes=True)
 csrf = CSRFProtect(app)
 
 from main_app.main.routes import main
