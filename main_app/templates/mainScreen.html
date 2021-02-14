@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}MONKEYsee{% endblock title %}
+{% block content %}
+<style>
+    .mySlides {
+        display: none;
+    }
+</style>
+<h2 class="w3-center">FEATURED ARTWORK</h2>
+
+<div class="w3-content w3-display-container">
+    <img class="mySlides" src="https://i.pinimg.com/originals/57/a3/78/57a378c88099a6366e5bff1b9d5f125d.jpg"
+        style="width:100%">
+    <img class="mySlides" src="https://i.pinimg.com/originals/09/6a/35/096a35453660aa9b83ba4ab6d9182d61.jpg"
+        style="width:100%">
+    <img class="mySlides" src="https://i.imgur.com/5VOiHDo.jpg" style="width:100%">
+    <img class="mySlides" src="https://wallpapercave.com/wp/8UgQsyE.jpg" style="width:100%">
+
+    <button class="w3-button w3-black w3-display-left" onclick="plusDivs(-1)">&#10094;</button>
+    <button class="w3-button w3-black w3-display-right" onclick="plusDivs(1)">&#10095;</button>
+</div>
+<script src="{{ url_for('static', filename='scripts.js') }}"></script>
+{% endblock content %}

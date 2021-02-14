@@ -1,22 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{% block title %}{% endblock %}</title>
+        {% block header %}{% endblock header %}
+        <title>{% block title %}{% endblock title %}</title>
     </head>
     <body>
         <div id="header">
             {% for message in get_flashed_messages() %}
                 {{ message }}
             {% endfor %}
-            <nav>
-                <a href="/">Home</a>
-            </nav>
 
-            {% if session.logged_in %}
-            You are logged in as {{ session.username }}
-            {% endif %}
+            <div class="topnav">
+                <div class="padding">
+                    <a><img src="https://www.freepnglogos.com/uploads/monkey-png/monkey-png-transparent-images-png-only-6.png"
+                            width="30px"></a>
+                    <a class="active" href="/">Home</a>
+                    <a href="/users">Users</a>
+                    <a href="/posts">Posts</a>
+                </div>
+            
+                <div class="signup-container">
+                    {% if not session.logged_in %}
+                    <a href="/sign-up">
+                        <img src="https://static.thenounproject.com/png/5506-200.png" alt="W3Schools.com" width="30" height="30">
+                    </a>
+                    <a href="/login">Log In</a>
+                    {% else %}
+                    <a href="/users/{{ session.user_id }}">{{ session.username }}</a>
+                    <a href="/logout">Log Out</a>
+                    {% endif %}
+                </div>
+                <div class="search-container">
+                    <form action="/action_page.php">
+                        <input type="text" placeholder="Search.." name="search">
+                    </form>
+                </div>
+            </div>
         </div>
         {% block content %}{% endblock %}
     </body>
