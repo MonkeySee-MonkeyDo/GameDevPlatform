@@ -7,33 +7,33 @@ from main_app import app, db
 
 main = Blueprint("main", __name__)
 
-@main.route("/")
+@main.route("/", methods=["GET"])
 def homepage():
     """Homepage"""
     return render_template("index.html")
 
-@main.route("/users")
+@main.route("/users", methods=["GET"])
 @login_flags(flags=["logged in"])
 def users():
     """Display users"""
     users_data = db.users.find()
     return render_template("users.html", users=users_data)
 
-@main.route("/posts")
+@main.route("/posts", methods=["GET"])
 @login_flags(flags=["logged in"])
 def posts():
     """Display posts"""
     posts_data = db.posts.find()
     return render_template("posts.html", posts=posts_data)
 
-@main.route("/users/<user_id>")
+@main.route("/users/<user_id>", methods=["GET"])
 @login_flags(flags=["logged in"])
 def user(user_id):
     """Display user information"""
     user_data = doc_from_id(db.users, user_id)
     return render_template("user.html", user=user_data)
 
-@main.route("/profiles/<user_id>")
+@main.route("/profiles/<user_id>", methods=["GET"])
 @login_flags(flags=["logged in"])
 def profile(user_id):
     """Display profile information"""

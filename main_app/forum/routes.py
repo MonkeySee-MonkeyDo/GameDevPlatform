@@ -28,12 +28,12 @@ def post(post_id):
     """Display post information"""
     post_data = doc_from_id(db.posts, post_id)
     post_data["user"] = doc_from_id(db.users, post_data["user_id"])
-    post_data["body"] = html(post_data["body"])
+    # post_data["body"] = html(post_data["body"])
     users = db.users.find()
     replies = [reply for reply in db.replies.find({"post_id": post_id})]
     for reply in replies:
         reply["user"] = doc_from_id(db.users, reply["user_id"])
-        reply["body"] = html(reply["body"])
+        # reply["body"] = html(reply["body"])
     form = ReplyForm("New Reply", "Please fill out reply info:", users)
     if request.method == "POST":
         reply_variables = {

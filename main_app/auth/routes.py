@@ -44,7 +44,7 @@ def login_user():
         flash("Password incorrect. Please try again.")
     return render_template("form.html", form=form)
 
-@auth.route("/logout")
+@auth.route("/logout", methods=["GET"])
 @login_flags(flags=["logged in"])
 def logout_user():
     auth_logout()
