@@ -83,7 +83,7 @@ def delete_user(user_id):
             db.users.delete_one(user_data)
             db.profiles.delete_one({"user_id": user_id})
             flash("User deleted successfully.")
-            return redirect(url_for("auth.logout"))
+            return redirect(url_for("auth.logout_user"))
         else:
             flash("Password was not correct.")
     return render_template("form.html", form=form)

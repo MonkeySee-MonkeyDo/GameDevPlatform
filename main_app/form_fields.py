@@ -28,8 +28,9 @@ class FileUploadField(Field):
         """
 
 class InputField(Field):
-    def __init__(self, title, name, input_type, required=False, disabled=False):
+    def __init__(self, title, name, input_type, pattern, required=False, disabled=False):
         self.input_type = input_type
+        self.pattern = pattern
         super().__init__(title, name, required, disabled)
     
     def render(self):
@@ -39,10 +40,41 @@ class InputField(Field):
             <input type="{self.input_type}" 
             name="{self.name if self.name else ""}"
             {' value="' + self.value + '"' if self.value else ""}
+            {' pattern="' + self.pattern + '"' if self.pattern else ""}
             {" required" if self.required else ""}
             {" disabled" if self.disabled else ""}>
         </label>
         """
+
+class TextField(InputField):
+    def __init__(self, title, name, pattern=None, required=False, disabled=False):
+        super().__init__(title, name, "text", pattern, required, disabled)
+
+class UsernameField(TextField):
+    def __init__(self, title, name, required=False, disabled=False):
+        pattern = "^[\w\.]{4,}$"
+        super().__init__(title, name, pattern, required, disabled)
+
+class PasswordField(InputField):
+    def __init__(self, title, name, required=False, disabled=False):
+        super().__init__(title, name, "password", None, required, disabled)
+
+class EmailField(InputField):
+    def __init__(self, title, name, required=False, disabled=False):
+        super().__init__(title, name, "email", None, required, disabled)
+
+class TelField(InputField):
+    def __init__(self, title, name, required=False, disabled=False):
+        pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+        super().__init__(title, name, "tel", pattern, required, disabled)
+
+class DateField(InputField):
+    def __init__(self, title, name, required=False, disabled=False):
+        super().__init__(title, name, "date", None, required, disabled)
+
+class URLField(InputField):
+    def __init__(self, title, name, required=False, disabled=False):
+        super().__init__(title, name, "url", None, required, disabled)
 
 class TextAreaField(Field):
     def __init__(self, title, name, rows, cols, required=False, disabled=False):
