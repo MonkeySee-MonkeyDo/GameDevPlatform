@@ -19,7 +19,9 @@ def blank_profile(user_id, email, **kwargs):
             "email": email,
             "dob": None,
             "role": None,
-            "link": None
+            "link": None,
+            "following": [],
+            "followers": []
         }
     return {
         "user_id": user_id,
@@ -30,7 +32,9 @@ def blank_profile(user_id, email, **kwargs):
         "email": email,
         "dob": kwargs["dob"],
         "role": kwargs["role"],
-        "link": kwargs["link"]
+        "link": kwargs["link"],
+        "following": [],
+        "followers": []
     }
 
 def blank_post(user_id, title, body, votes=0, **kwargs):

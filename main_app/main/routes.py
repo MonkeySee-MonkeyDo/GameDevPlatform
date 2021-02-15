@@ -38,7 +38,11 @@ def user(user_id):
 def profile(user_id):
     """Display profile information"""
     profile_data = db.profiles.find_one({"user_id": user_id})
-    return render_template("profile.html", profile=profile_data)
+    following = False
+    if "followers" in profile_data:
+        if session["user_id"] in profile_data["followers"]:
+            following = True
+    return render_template("profile.html", profile=profile_data, following=following)
 
 @main.route("/users/<user_id>/edit", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
@@ -87,3 +91,57 @@ def delete_user(user_id):
         else:
             flash("Password was not correct.")
     return render_template("form.html", form=form)
+
+@main.route("/follow/<user_id>", methods=["GET"])
+@login_flags(flags=["logged in"])
+def follow_user(user_id):
+    if user_id == session["user_id"]:
+        flash("You cannot follow yourself!")
+        return redirect(url_for("main.profile", user_id=user_id, following=False))
+    follower_data = db.profiles.find_one({"user_id": session["user_id"]})
+    following_data = db.profiles.find_one({"user_id": user_id})
+    if "following" in follower_data:
+        following = follower_data["following"]
+    else:
+        db.profiles.update_one({"user_id": session["user_id"]}, {"$set": {"following": []}})
+        following = []
+    if "followers" in following_data:
+        followers = following_data["followers"]
+    else:
+        db.profiles.update_one({"user_id": user_id}, {"$set": {"followers": []}})
+        followers = []
+    if not user_id in following:
+        db.profiles.update_one({"user_id": session["user_id"]}, {"$push": {"following": user_id}})
+        db.profiles.update_one({"user_id": user_id}, {"$push": {"followers": session["user_id"]}})
+        flash("You have successfully followed this user.")
+    else:
+        flash("You are already following this user!")
+    return redirect(url_for("main.profile", user_id=user_id, following=True))
+
+@main.route("/unfollow/<user_id>", methods=["GET"])
+@login_flags(flags=["logged in"])
+def unfollow_user(user_id):
+    if user_id == session["user_id"]:
+        flash("You cannot unfollow yourself!")
+        return redirect(url_for("main.profile", user_id=user_id, following=False))
+    follower_data = db.profiles.find_one({"user_id": session["user_id"]})
+    following_data = db.profiles.find_one({"user_id": user_id})
+    if "following" in follower_data:
+        following = follower_data["following"]
+    else:
+        db.profiles.update_one({"user_id": session["user_id"]}, {"$set": {"following": []}})
+        flash("You are not following this user!")
+        return redirect(url_for("main.profile", user_id=user_id, following=False))
+    if "followers" in following_data:
+        followers = following_data["followers"]
+    else:
+        db.profiles.update_one({"user_id": user_id}, {"$set": {"followers": []}})
+        flash("You are not following this user!")
+        return redirect(url_for("main.profile", user_id=user_id, following=False))
+    if user_id in following:
+        db.profiles.update_one({"user_id": session["user_id"]}, {"$pull": {"following": user_id}})
+        db.profiles.update_one({"user_id": user_id}, {"$pull": {"followers": session["user_id"]}})
+        flash("You have successfully unfollowed this user.")
+    else:
+        flash("You are not following this user!")
+    return redirect(url_for("main.profile", user_id=user_id, following=False))

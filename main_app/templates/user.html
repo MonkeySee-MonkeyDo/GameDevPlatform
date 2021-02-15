@@ -6,8 +6,10 @@
     <p>Username: {{ user.username }}</p>
     <p>Password: {{ user.password }}</p>
     <p>Email: {{ user.email }}</p>
-    <p><a href="/profiles/{{ user._id }}">PROFILE</a></p>
-    <p><a href="/users/{{ user._id }}/edit">EDIT</a></p>
-    <p><a href="/users/{{ user._id }}/delete">- DELETE</a></p>
+    <p><a href="/profiles/{{ user._id | string}}">PROFILE</a></p>
+    {% if session.user_id == user._id | string %}
+    <p><a href="/users/{{ user._id | string}}/edit">EDIT</a></p>
+    <p><a href="/users/{{ user._id | string}}/delete">- DELETE</a></p>
+    {% endif %}
 </main>
 {% endblock content %}

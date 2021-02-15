@@ -8,7 +8,7 @@ from main_app import db
 
 forum = Blueprint("forum", __name__)
 
-@forum.route("/create-post", methods=["GET", "POST"])
+@forum.route("/posts/create", methods=["GET", "POST"])
 @login_flags(flags=["logged in"])
 def create_post():
     """Post creation"""
