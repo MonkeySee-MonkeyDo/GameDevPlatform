@@ -32,3 +32,11 @@ class ProfileForm(Form):
             URLField("Link", "link"),
             FileUploadField("Profile Picture", "profile_picture", ["image/*"])
         )
+
+class ProjectForm(Form):
+    def __init__(self, title, legend):
+        super().__init__(title, legend, "Submit",
+        TextField("Project Name", "title", required=True),
+        TextAreaField("Description", "description", 4, 50)
+        FileUploadField("Project Image", "image", ["image/*"])
+        URLField("Link", "link"))

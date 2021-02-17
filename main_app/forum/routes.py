@@ -44,3 +44,4 @@ def post(post_id):
         flash("Reply created successfully")
         return redirect(url_for("forum.post", post_id=post_id))
     return render_template("post.html", post=post_data, form=form, replies=replies)
+
