@@ -145,3 +145,22 @@ def unfollow_user(user_id):
     else:
         flash("You are not following this user!")
     return redirect(url_for("main.profile", user_id=user_id, following=False))
+
+@main.route("/projects/<project_id>", methods=["GET"])
+@login_flags(flags=["logged in", "check users"])
+def project(project_id):
+    project_data = doc_from_id(db.projects, project_id)
+    return render_template("project.html", project = project_data)
+
+@main.route("/projects/create", method=["GET", "POST"])
+@login_flags(flags=["logged in"])
+def create_project():
+    form = ProjectForm()
+    if request.method == "POST":
+        new_project = blank_project(session["user_id"],**request.form)
+        db.projects.insert_one(new_project)
+        project_id = str(db.projects.find_one(new_project)["_id"])
+        #Returns id as a string
+        flash("Project successfully created.")
+        return redirect(url_for("main.project",project_id = project_id))
+    return render_template("form.html", form=form)
