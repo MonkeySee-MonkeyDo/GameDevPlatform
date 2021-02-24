@@ -47,6 +47,7 @@ def profile(user_id):
 @main.route("/users/<user_id>/edit", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def edit_user(user_id):
+    '''Allows the user to edit their password'''
     user_data = doc_from_id(db.users, user_id)
     form = EditUserForm("Edit User", "Please edit your info:")
     form.set_values(user_data)
@@ -61,6 +62,7 @@ def edit_user(user_id):
 @main.route("/profiles/<user_id>/edit", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def edit_profile(user_id):
+    '''Allows editing of user profiles'''
     profile_data = db.profiles.find_one({"user_id": user_id})
     form = ProfileForm("Edit Profile", "Please edit your info:")
     form.set_values(profile_data)
@@ -80,6 +82,7 @@ def edit_profile(user_id):
 @main.route("/users/<user_id>/delete", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def delete_user(user_id):
+    '''Allows deletion of user profile'''
     user_data = doc_from_id(db.users, user_id)
     form = DeleteUserForm()
     if request.method == "POST":
@@ -96,6 +99,7 @@ def delete_user(user_id):
 @main.route("/follow/<user_id>", methods=["GET"])
 @login_flags(flags=["logged in"])
 def follow_user(user_id):
+    '''Allows following of users'''
     if user_id == session["user_id"]:
         flash("You cannot follow yourself!")
         return redirect(url_for("main.profile", user_id=user_id, following=False))
@@ -122,6 +126,7 @@ def follow_user(user_id):
 @main.route("/unfollow/<user_id>", methods=["GET"])
 @login_flags(flags=["logged in"])
 def unfollow_user(user_id):
+    '''Allows unfollowing of users'''
     if user_id == session["user_id"]:
         flash("You cannot unfollow yourself!")
         return redirect(url_for("main.profile", user_id=user_id, following=False))
@@ -150,6 +155,7 @@ def unfollow_user(user_id):
 @main.route("/projects/<project_id>", methods=["GET"])
 @login_flags(flags=["logged in", "check users"])
 def project(project_id):
+    '''Is the project that the user creates'''
     project_data = doc_from_id(db.projects, project_id)
     return render_template("project.html", project = project_data)
 
