@@ -157,6 +157,7 @@ def project(project_id):
 @main.route("/projects/create", method=["GET", "POST"])
 @login_flags(flags=["logged in"])
 def create_project():
+    '''Allows the user to create a project'''
     form = ProjectForm()
     if request.method == "POST":
         new_project = blank_project(session["user_id"],**request.form)
@@ -169,3 +170,20 @@ def create_project():
 
 
 >>>>>>> Stashed changes
+@main.route("/projects/<project_id>/edit" methods=["GET"])
+@login_flags(flags=["logged in"])
+def edit_project(project_id):
+    '''Allows the user to edit a prexisting project'''
+    project_data = doc_from_id(db.projects, project_id)
+    #Do we have an EditUserProfile class yet?
+    form = EditUserProject("Edit Project", "Please edit your profile:")
+    form.set_values(project_id)
+    if request.method == "POST":
+        #Not sure where these are coming from
+        edited_profile = blank_profile(**request.forms)
+        edited_profile["password"] = hash_password(edited_project["password"])
+        #Would password be a key to edit a profile?
+        db.users.update_one(user_data, {"$set": edited_project})
+        flash("Project edited successfully.")
+        return redirect(url_for("main.user", user_id=user_id))
+    return render_template("form.html", form=form)
