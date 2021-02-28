@@ -16,15 +16,17 @@ class FileUploadField(Field):
     
     def render(self):
         return f"""
-        <label>
-            {self.title}{"*" if self.required else ""}:
+        <div class="form-group">
+            <label for="{self.name}>{self.title}{"*" if self.required else ""}:</label>
             <input 
             type="file" 
+            class="form-control" 
             name="{self.name if self.name else ""}"
             {' accept="' + ",".join(self.file_types) + '"' if self.file_types else ""}
             {" required" if self.required else ""}
             {" disabled" if self.disabled else ""}>
-        </label>
+        </div>
+
         """
 
 class InputField(Field):
@@ -35,15 +37,17 @@ class InputField(Field):
     
     def render(self):
         return f"""
-        <label>
-            {self.title}{"*" if self.required else ""}:
+        <div class="form-group">
+            <label for={self.name}>{self.title}{"*" if self.required else ""}:</label>
             <input type="{self.input_type}" 
-            name="{self.name if self.name else ""}"
+            name="{self.name if self.name else ""}" 
+            class="form-control-file" 
             {' value="' + self.value + '"' if self.value else ""}
             {' pattern="' + self.pattern + '"' if self.pattern else ""}
             {" required" if self.required else ""}
             {" disabled" if self.disabled else ""}>
-        </label>
+        </div>
+
         """
 
 class TextField(InputField):
@@ -84,16 +88,17 @@ class TextAreaField(Field):
     
     def render(self):
         return f"""
-        <label>
-            {self.title}{"*" if self.required else ""}:
+        <div class="form-group">
+            <label for="{self.name}">{self.title}{"*" if self.required else ""}:</label>
             <textarea 
+            class="form-control" 
             row="{self.rows}" 
             cols="{self.cols}" 
             name="{self.name if self.name else ""}"
             {" required" if self.required else ""}
             {" disabled" if self.disabled else ""}
             >{self.value if self.value else ""}</textarea>
-        </label>
+        </div>
         """
 
 class SelectField(Field):
@@ -103,9 +108,10 @@ class SelectField(Field):
     
     def render(self):
         start = f"""
-        <label>
-            {self.title}{"*" if self.required else ""}:
+        <div class="form-group">
+            <label for="{self.name if self.name else ""}>{self.title}{"*" if self.required else ""}:</label>
             <select 
+            class="form-control" 
             name="{self.name if self.name else ""}"
             {" required" if self.required else ""}
             {" disabled" if self.disabled else ""}>"""
@@ -118,7 +124,7 @@ class SelectField(Field):
                 >{option[1]}</option>"""
         end = f"""
             </select>
-        </label>
+        </div>
         """
         return start + middle + end
 
@@ -134,7 +140,7 @@ class Form:
         for field in self.fields:
             output += field.render()
         output += f"""
-        <input type="submit" value="{self.submit}">
+        <div class="form-group"><button class="btn btn-primary btn-block" type="submit">{self.submit}</button></div>
         """
         return output
     

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}MONKEYsee{% endblock title %}
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static', filename='Login-Form-Dark.css') }}">
+{% endblock header %}
+{% block content %}
+<div class="login-dark">
+    <h2 class="sr-only">Login Form</h2>
+    {% include "form_template.html" %}
+</div>
+{% endblock content %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='smart-forms.min.js') }}"></script>
+{% endblock scripts %}

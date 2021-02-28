@@ -28,7 +28,7 @@ def sign_up():
         db.profiles.insert_one(new_profile)
         flash("User created successfully.")
         return redirect(url_for("auth.login_user", user_id=new_user_id))
-    return render_template("form.html", form=form)
+    return render_template("signup-form.html", form=form)
 
 @auth.route("/login", methods=["GET", "POST"])
 @login_flags(flags=["logged out"])
@@ -42,7 +42,7 @@ def login_user():
                 flash("Password correct!")
                 return redirect(url_for("main.homepage"))
         flash("Password incorrect. Please try again.")
-    return render_template("form.html", form=form)
+    return render_template("login-form.html", form=form)
 
 @auth.route("/logout", methods=["GET"])
 @login_flags(flags=["logged in"])

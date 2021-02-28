@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Sign Up{% endblock title %}
+{% block header %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/css/lightbox.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/css/swiper.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='Lightbox-Gallery.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='Registration-Form-with-Photo.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='Simple-Slider.css') }}">
+{% endblock header %}
+{% block content %}
+    <div class="register-photo">
+        <div class="form-container">
+            <div class="image-holder"></div>
+            {% include "form_template.html" %}
+        </div>
+    </div>
+{% endblock content %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='smart-forms.min.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.8.2/js/lightbox.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/3.3.1/js/swiper.jquery.min.js"></script>
+<script src="{{ url_for('static', filename='Simple-Slider.js') }}"></script>
+{% endblock scripts %}

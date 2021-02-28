@@ -1,13 +1,23 @@
 * {box-sizing: border-box;}
 
 body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial;
+    padding: 20px;
+    background: #0e1518;
+}
+h2{
+    color: #ccc;
+}
+p{
+    color: #ccc;
+}
+h3{
+    color: #ccc;
 }
 
 .topnav {
     overflow: hidden;
-    background-color: #51b3b1;
+    background-color: #446867;
 }
 
 .topnav a {
@@ -78,4 +88,84 @@ body {
         border: 1px solid #ccc;
     }
 }
+  
+  /* Header/Blog Title */
+  .header {
+    padding: 30px;
+    font-size: 40px;
+    text-align: center;
+    background: rgb(49, 76, 233);
+  }
+  
+  /* Create two unequal columns that floats next to each other */
+  /* Left column */
+  .leftcolumn {
+    float: left;
+    width: 75%;
+  }
+  
+  /* Right column */
+  .rightcolumn {
+    float: left;
+    width: 25%;
+    padding-left: 20px;
+  }
+  
+  /* Add a card effect for articles */
+  .card {
+    background-color: rgb(62, 157, 164);
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* Footer */
+  .footer {
+    padding: 20px;
+    text-align: center;
+    background: #446867;
+    margin-top: 20px;
+  }
+  
+  /* Responsive layout - when the screen is less than 800px wide, make the two columns stack on top of each other instead of next to each other */
+  @media screen and (max-width: 800px) {
+    .leftcolumn, .rightcolumn {
+      width: 100%;
+      padding: 0;
+    }
+  }
 
+  .column {
+    float: left;
+    width: 25%;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
+  .square {
+    position: relative;
+    width: 33%;
+  }
+  
+  .square:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+  }
+  
+  .content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
