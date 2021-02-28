@@ -37,6 +37,5 @@ class ProjectForm(Form):
     def __init__(self, title, legend):
         super().__init__(title, legend, "Submit",
         TextField("Project Name", "title", required=True),
-        TextAreaField("Description", "description", 4, 50)
-        FileUploadField("Project Image", "image", ["image/*"])
+        TextAreaField("Description", "description", 4, 50),
         URLField("Link", "link"))

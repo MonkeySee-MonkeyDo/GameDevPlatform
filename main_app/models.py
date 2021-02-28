@@ -55,11 +55,10 @@ def blank_reply(user_id, post_id, body, votes=0, **kwargs):
         "timestamp": Timestamp(datetime.now(), 1)
     }
 
-def blank_project(user_id, title, description, image, link):
+def blank_project(user_id, title, description, link, **kwargs):
     return {
-        "user_id": user_id
-        "title": title
-        "description": description
-        "image": image
+        "user_id": user_id,
+        "title": title,
+        "description": description,
         "link": link
     }

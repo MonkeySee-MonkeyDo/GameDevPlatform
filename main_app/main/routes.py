@@ -95,7 +95,6 @@ def delete_user(user_id):
             flash("Password was not correct.")
     return render_template("form.html", form=form)
 
-<<<<<<< Updated upstream
 @main.route("/follow/<user_id>", methods=["GET"])
 @login_flags(flags=["logged in"])
 def follow_user(user_id):
@@ -151,45 +150,45 @@ def unfollow_user(user_id):
     else:
         flash("You are not following this user!")
     return redirect(url_for("main.profile", user_id=user_id, following=False))
-=======
+
+@main.route("/projects", methods=["GET"])
+@login_flags(flags=["logged in"])
+def projects():
+    projects_data = db.projects.find()
+    return render_template("projects.html", projects=projects_data)
+
 @main.route("/projects/<project_id>", methods=["GET"])
-@login_flags(flags=["logged in", "check users"])
+@login_flags(flags=["logged in"])
 def project(project_id):
     '''Is the project that the user creates'''
     project_data = doc_from_id(db.projects, project_id)
-    return render_template("project.html", project = project_data)
+    return render_template("project.html", project=project_data)
 
-
-@main.route("/projects/create", method=["GET", "POST"])
+@main.route("/projects/create", methods=["GET", "POST"])
 @login_flags(flags=["logged in"])
 def create_project():
     '''Allows the user to create a project'''
-    form = ProjectForm()
+    form = ProjectForm("Create Project", "Please fill out project info:")
     if request.method == "POST":
-        new_project = blank_project(session["user_id"],**request.form)
+        new_project = blank_project(session["user_id"], **request.form)
         db.projects.insert_one(new_project)
         project_id = str(db.projects.find_one(new_project)["_id"])
-        #Returns id as a string
         flash("Project successfully created.")
-        return redirect(url_for("main.project",project_id = project_id))
+        return redirect(url_for("main.project", project_id=project_id))
     return render_template("form.html", form=form)
 
-
->>>>>>> Stashed changes
-@main.route("/projects/<project_id>/edit" methods=["GET"])
+@main.route("/projects/<project_id>/edit", methods=["GET"])
 @login_flags(flags=["logged in"])
 def edit_project(project_id):
     '''Allows the user to edit a prexisting project'''
     project_data = doc_from_id(db.projects, project_id)
-    #Do we have an EditUserProfile class yet?
-    form = EditUserProject("Edit Project", "Please edit your profile:")
-    form.set_values(project_id)
+    if not check_user(user_id=project_data["user_id"]):
+        return redirect(url_for("main.homepage"))
+    form = ProjectForm("Edit Project", "Please edit your profile:")
+    form.set_values(project_data)
     if request.method == "POST":
-        #Not sure where these are coming from
-        edited_profile = blank_profile(**request.forms)
-        edited_profile["password"] = hash_password(edited_project["password"])
-        #Would password be a key to edit a profile?
+        edited_profile = blank_profile(**request.form)
         db.users.update_one(user_data, {"$set": edited_project})
         flash("Project edited successfully.")
-        return redirect(url_for("main.user", user_id=user_id))
+        return redirect(url_for("main.project", project_id=project_id))
     return render_template("form.html", form=form)
