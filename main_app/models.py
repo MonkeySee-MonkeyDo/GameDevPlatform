@@ -54,3 +54,11 @@ def blank_reply(user_id, post_id, body, votes=0, **kwargs):
         "votes": votes,
         "timestamp": Timestamp(datetime.now(), 1)
     }
+
+def blank_project(user_id, title, description, link, **kwargs):
+    return {
+        "user_id": user_id,
+        "title": title,
+        "description": description,
+        "link": link
+    }

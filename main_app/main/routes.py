@@ -47,6 +47,7 @@ def profile(user_id):
 @main.route("/users/<user_id>/edit", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def edit_user(user_id):
+    '''Allows the user to edit their password'''
     user_data = doc_from_id(db.users, user_id)
     form = EditUserForm("Edit User", "Please edit your info:")
     form.set_values(user_data)
@@ -61,6 +62,7 @@ def edit_user(user_id):
 @main.route("/profiles/<user_id>/edit", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def edit_profile(user_id):
+    '''Allows editing of user profiles'''
     profile_data = db.profiles.find_one({"user_id": user_id})
     form = ProfileForm("Edit Profile", "Please edit your info:")
     form.set_values(profile_data)
@@ -80,6 +82,7 @@ def edit_profile(user_id):
 @main.route("/users/<user_id>/delete", methods=["GET", "POST"])
 @login_flags(flags=["logged in", "check user"])
 def delete_user(user_id):
+    '''Allows deletion of user profile'''
     user_data = doc_from_id(db.users, user_id)
     form = DeleteUserForm()
     if request.method == "POST":
@@ -95,6 +98,7 @@ def delete_user(user_id):
 @main.route("/follow/<user_id>", methods=["GET"])
 @login_flags(flags=["logged in"])
 def follow_user(user_id):
+    '''Allows following of users'''
     if user_id == session["user_id"]:
         flash("You cannot follow yourself!")
         return redirect(url_for("main.profile", user_id=user_id, following=False))
@@ -121,6 +125,7 @@ def follow_user(user_id):
 @main.route("/unfollow/<user_id>", methods=["GET"])
 @login_flags(flags=["logged in"])
 def unfollow_user(user_id):
+    '''Allows unfollowing of users'''
     if user_id == session["user_id"]:
         flash("You cannot unfollow yourself!")
         return redirect(url_for("main.profile", user_id=user_id, following=False))
@@ -146,21 +151,44 @@ def unfollow_user(user_id):
         flash("You are not following this user!")
     return redirect(url_for("main.profile", user_id=user_id, following=False))
 
-@main.route("/projects/<project_id>", methods=["GET"])
-@login_flags(flags=["logged in", "check users"])
-def project(project_id):
-    project_data = doc_from_id(db.projects, project_id)
-    return render_template("project.html", project = project_data)
+@main.route("/projects", methods=["GET"])
+@login_flags(flags=["logged in"])
+def projects():
+    projects_data = db.projects.find()
+    return render_template("projects.html", projects=projects_data)
 
-@main.route("/projects/create", method=["GET", "POST"])
+@main.route("/projects/<project_id>", methods=["GET"])
+@login_flags(flags=["logged in"])
+def project(project_id):
+    '''Is the project that the user creates'''
+    project_data = doc_from_id(db.projects, project_id)
+    return render_template("project.html", project=project_data)
+
+@main.route("/projects/create", methods=["GET", "POST"])
 @login_flags(flags=["logged in"])
 def create_project():
-    form = ProjectForm()
+    '''Allows the user to create a project'''
+    form = ProjectForm("Create Project", "Please fill out project info:")
     if request.method == "POST":
-        new_project = blank_project(session["user_id"],**request.form)
+        new_project = blank_project(session["user_id"], **request.form)
         db.projects.insert_one(new_project)
         project_id = str(db.projects.find_one(new_project)["_id"])
-        #Returns id as a string
         flash("Project successfully created.")
-        return redirect(url_for("main.project",project_id = project_id))
+        return redirect(url_for("main.project", project_id=project_id))
+    return render_template("form.html", form=form)
+
+@main.route("/projects/<project_id>/edit", methods=["GET"])
+@login_flags(flags=["logged in"])
+def edit_project(project_id):
+    '''Allows the user to edit a prexisting project'''
+    project_data = doc_from_id(db.projects, project_id)
+    if not check_user(user_id=project_data["user_id"]):
+        return redirect(url_for("main.homepage"))
+    form = ProjectForm("Edit Project", "Please edit your profile:")
+    form.set_values(project_data)
+    if request.method == "POST":
+        edited_profile = blank_profile(**request.form)
+        db.users.update_one(user_data, {"$set": edited_project})
+        flash("Project edited successfully.")
+        return redirect(url_for("main.project", project_id=project_id))
     return render_template("form.html", form=form)
