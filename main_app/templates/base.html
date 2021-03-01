@@ -16,14 +16,27 @@
                 {{ message }}
             {% endfor %}
 
+            {% set homeclass, usersclass, postsclass, projectsclass = "", "", "", "" %}
+            {% set endpoint = url_for(request.endpoint) %}
+
+            {% if "users" in endpoint or "profiles" in endpoint %}
+            {% set usersclass = "active" %}
+            {% elif "posts" in endpoint %}
+            {% set postsclass = "active" %}
+            {% elif "projects" in endpoint %}
+            {% set projectsclass = "active" %}
+            {% else %}
+            {% set homeclass = "active" %}
+            {% endif %}
+            
             <div class="topnav">
                 <div class="padding">
                     <a><img src="https://www.freepnglogos.com/uploads/monkey-png/monkey-png-transparent-images-png-only-6.png"
                             width="30px"></a>
-                    <a class="active" href="/">Home</a>
-                    <a href="/users">Users</a>
-                    <a href="/posts">Posts</a>
-                    <a href="/projects">Projects</a>
+                    <a class="{{ homeclass }}" href="/">Home</a>
+                    <a class="{{ usersclass }}"href="/users">Users</a>
+                    <a class="{{ postsclass }}"href="/posts">Posts</a>
+                    <a class="{{ projectsclass }}"href="/projects">Projects</a>
                 </div>
             
                 <div class="signup-container">
