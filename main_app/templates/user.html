@@ -2,14 +2,28 @@
 {% block title %}User Detail{% endblock title %}
 {% block content %}
 <main>
-    <p>User ID: {{ user._id }}</p>
+    {% set user_id = user._id | string %}
+    <p>User ID: {{ user_id }}</p>
     <p>Username: {{ user.username }}</p>
     <p>Password: {{ user.password }}</p>
     <p>Email: {{ user.email }}</p>
-    <p><a href="/profiles/{{ user._id | string}}">PROFILE</a></p>
+    <p>First Name: {{ user.first_name }}</p>
+    <p>Last Name: {{ user.last_name }}</p>
+    <p>Phone Number: {{ user.phone_number }}</p>
+    <p>Date of Birth: {{ user.dob }}</p>
+    <p>Sex: {{ user.sex }}</p>
+    <p>Role: {{ user.role }}</p>
+    <p>Link: {{ user.link }}</p>
+    <p>Profile Picture: 
+        <img src="/static/uploads/images/user_{{ user_id }}.png">
+    </p>
     {% if session.user_id == user._id | string %}
-    <p><a href="/users/{{ user._id | string}}/edit">EDIT</a></p>
-    <p><a href="/users/{{ user._id | string}}/delete">- DELETE</a></p>
+    <p><a href="/users/{{ user_id }}/edit">EDIT</a></p>
+    <p><a href="/users/{{ user_id }}/delete">- DELETE</a></p>
+    {% elif not following %}
+    <p><a href="/follow/{{ user_id }}">FOLLOW</a></p>
+    {% else %}
+    <p><a href="/unfollow/{{ user_id }}">UNFOLLOW</a></p>
     {% endif %}
 </main>
 {% endblock content %}

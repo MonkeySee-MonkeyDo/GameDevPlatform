@@ -17,7 +17,7 @@ class FileUploadField(Field):
     def render(self):
         return f"""
         <div class="form-group">
-            <label for="{self.name}>{self.title}{"*" if self.required else ""}:</label>
+            <label for="{self.name}">{self.title}{"*" if self.required else ""}:</label>
             <input 
             type="file" 
             class="form-control" 
@@ -38,7 +38,7 @@ class InputField(Field):
     def render(self):
         return f"""
         <div class="form-group">
-            <label for={self.name}>{self.title}{"*" if self.required else ""}:</label>
+            <label for="{self.name}">{self.title}{"*" if self.required else ""}:</label>
             <input type="{self.input_type}" 
             name="{self.name if self.name else ""}" 
             class="form-control-file" 
@@ -109,7 +109,7 @@ class SelectField(Field):
     def render(self):
         start = f"""
         <div class="form-group">
-            <label for="{self.name if self.name else ""}>{self.title}{"*" if self.required else ""}:</label>
+            <label for="{self.name if self.name else ""}">{self.title}{"*" if self.required else ""}:</label>
             <select 
             class="form-control" 
             name="{self.name if self.name else ""}"

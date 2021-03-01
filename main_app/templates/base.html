@@ -17,13 +17,13 @@
             {% endfor %}
 
             {% set homeclass, usersclass, postsclass, projectsclass = "", "", "", "" %}
-            {% set endpoint = url_for(request.endpoint) %}
+            {% set url = request.url %}
 
-            {% if "users" in endpoint or "profiles" in endpoint %}
+            {% if "users" in url %}
             {% set usersclass = "active" %}
-            {% elif "posts" in endpoint %}
+            {% elif "posts" in url %}
             {% set postsclass = "active" %}
-            {% elif "projects" in endpoint %}
+            {% elif "projects" in url %}
             {% set projectsclass = "active" %}
             {% else %}
             {% set homeclass = "active" %}

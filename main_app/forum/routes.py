@@ -26,12 +26,12 @@ def create_post():
 @login_flags(flags=["logged in"])
 def post(post_id):
     """Display post information"""
-    post_data = doc_from_id(db.posts, post_id)
-    post_data["user"] = doc_from_id(db.users, post_data["user_id"])
+    post_data = db.posts.find_one(get_id(post_id))
+    post_data["user"] = db.users.find_one(get_id(post_data["user_id"]))
     users = db.users.find()
     replies = [reply for reply in db.replies.find({"post_id": post_id})]
     for reply in replies:
-        reply["user"] = doc_from_id(db.users, reply["user_id"])
+        reply["user"] = db.users.find_one(get_id(reply["user_id"]))
     form = ReplyForm("New Reply", "Please fill out reply info:", users)
     if request.method == "POST":
         reply_variables = {

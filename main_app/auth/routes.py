@@ -23,9 +23,6 @@ def sign_up():
             return redirect(url_for("auth.sign_up"))
         db.users.insert_one(new_user)
         new_user_id = db.users.find_one(new_user)["_id"]
-        new_user_email = new_user["email"]
-        new_profile = blank_profile(str(new_user_id), new_user_email)
-        db.profiles.insert_one(new_profile)
         flash("User created successfully.")
         return redirect(url_for("auth.login_user", user_id=new_user_id))
     return render_template("signup-form.html", form=form)

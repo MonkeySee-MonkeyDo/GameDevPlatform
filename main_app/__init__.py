@@ -3,7 +3,6 @@ from flask_pymongo import PyMongo
 from flask_wtf.csrf import CSRFProtect
 from flask_misaka import Misaka
 from main_app.config import Config
-from main_app.main.helpers import doc_from_id
 import os
 
 app = Flask(__name__)
