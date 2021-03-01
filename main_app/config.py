@@ -1,3 +1,4 @@
+from datetime import timedelta
 from dotenv import load_dotenv
 import os
 
@@ -12,3 +13,4 @@ secret_key=os.getenv("SECRET_KEY")
 class Config:
     MONGO_URI = f"mongodb+srv://{username}:{password}@{cluster_url}/{db}?retryWrites=true&w=majority"
     SECRET_KEY = secret_key
+    PERMANENT_SESSION_LIFETIME = timedelta(minutes=30)
