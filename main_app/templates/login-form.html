@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}MONKEYsee{% endblock title %}
 {% block header %}
-<link rel="stylesheet" href="{{ url_for('static', filename='Login-Form-Dark.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='/css/Login-Form-Dark.css') }}">
 {% endblock header %}
 {% block content %}
 <div class="login-dark">
@@ -10,5 +10,5 @@
 </div>
 {% endblock content %}
 {% block scripts %}
-<script src="{{ url_for('static', filename='smart-forms.min.js') }}"></script>
+<script src="{{ url_for('static', filename='/css/smart-forms.min.js') }}"></script>
 {% endblock scripts %}
